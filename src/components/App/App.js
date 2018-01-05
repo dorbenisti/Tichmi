@@ -19,11 +19,13 @@ class App extends Component {
         <Link to='about'><button>Test React Router</button></Link>
         <br />
         <br />
-        <h1>test</h1>
         <button onClick={this.props.actions.expressTest}>Test if Express is working</button>
         <br />
         <br />
-        <div style={{ padding: '30px' }}>{this.props.results}</div>
+        {
+          this.props.expressTestPending && (<h1>loading</h1>)
+        }
+        { !this.props.expressTestPending && <div style={{ padding: '30px' }}>{this.props.results}</div> }
       </div>
     );
   }
