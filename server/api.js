@@ -15,6 +15,10 @@ api.get('/express-test', (req, res) => res.send({ express: 'working!' })) //demo
     failureRedirect: '/login', 
 }))
 
+.get('/user', (req, res) => {
+    res.send(req.user.email);
+})
+
 // No routes matched? 404.
 .use((req, res) => {
     return res.status(404).end();
