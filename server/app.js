@@ -2,9 +2,15 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const uuidv4 = require('uuid/v4');
 
 const app = express();
+
+require('./passport-auth')(passport);
 
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
@@ -14,8 +20,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
+// passport
+app.use(cookieParser());
+app.use(session({ secret: uuidv4() }));
+app.use(passport.initialize());
+app.use(passport.session());
 // Serve our api
-.use('/api', require('./api'))
+app.use('/api', require('./api'))
 
 // Always return the main index.html, so react-router render the route in the client
 app.get('*', (req, res) => {
