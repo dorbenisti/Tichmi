@@ -1,5 +1,11 @@
+body{
+  direction: rtl;
+  color: white;
+  background-color: floralwhite;
+}
 .App {
   text-align: center;
+  height: 100%;
 }
 
 .App-logo {
@@ -18,7 +24,32 @@
   font-size: large;
 }
 
+.Finder{
+  height: 100px;
+  width: 100%;
+  background: rgb(0, 188, 212);
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.teacherImageProfile{
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+}
+
+.teacherDetails{
+  background-color: aquamarine;
+  width: 270px;
+  height: 150px;
+  display: inline-block;
+  position: absolute;
+}
+
+.teacher{
+ /* display: inline-block;*/
+  margin: 10px;
 }
