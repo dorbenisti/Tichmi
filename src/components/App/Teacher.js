@@ -16,7 +16,7 @@ class Teacher extends Component {
             rate: props.rate ? props.rate : 4,
             reviewsCount: props.reviewsCount ? props.reviewsCount : 5,
             description: props.description ? props.description : "מורה טובה",
-            imagePath: props.imagePath ? props.imagePath : "src/images/dani.jpg",
+            imagePath: props.imagePath ? props.imagePath : "images/dani.jpg",
         }
 
 
@@ -25,13 +25,13 @@ class Teacher extends Component {
     render(){
         return <div className={styles.teacher}>
             <Link to='teacher'>
-            <img src={this.state.imagePath} className={styles.teacherImageProfile}/>
-            <div className={styles.teacherDetails}>
-                <h5 style={{marginRight: '10px'}}>{this.state.firstName} </h5>
-                <h6 style={{marginRight: '10px', marginTop: 0}}>{this.state.city}</h6>
-                <h5 style={{marginRight: '10px'}}>{this.state.description}</h5>
-                <h4 >{this.state.price}</h4>
-            </div>
+                <img src={this.state.imagePath} className={styles.teacherImageProfile}/>
+                <div className={styles.teacherDetails}>
+                    <h5 style={{marginRight: '10px'}}>{this.state.firstName} </h5>
+                    <h6 style={{marginRight: '10px', marginTop: 0}}>{this.state.city}</h6>
+                    <h5 style={{marginRight: '10px'}}>{this.state.description}</h5>
+                    <h4 >{this.state.price}</h4>
+                </div>
             </Link>
         </div>;
     }

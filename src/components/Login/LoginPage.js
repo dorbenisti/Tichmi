@@ -5,7 +5,7 @@ import classnames from 'classnames';
 export default class LoginPage extends Component {
     render() {
         return (
-            <div className={classnames('TeacherMain')}>
+            <div>
                 <h1>עמוד התחברות</h1>
             </div>
         );

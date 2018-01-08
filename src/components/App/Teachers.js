@@ -9,18 +9,15 @@ class Teachers extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            teachers: []
+            teachers: ['אבי', 'דני', 'דור', 'בר']
         }
     }
 
     render(){
-
-        this.state.teachers = [<Teacher firstName={"אבי"}/>,
-            <Teacher firstName={"דני"} />,
-            <Teacher firstName={"דור"}/>,
-            <Teacher firstName={"בר"}/>]
         return <div>
-            {this.state.teachers}
+            {this.state.teachers.map(teacherName => (
+                <Teacher firstName={teacherName} key={teacherName} />
+            ))}
         </div>;
     }
 }

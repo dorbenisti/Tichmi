@@ -39,29 +39,31 @@ class App extends Component {
       </div>
     );
   }*/
-  render(){
+  render() {
 
-      const muiTheme = getMuiTheme({
-          appBar: {
-              height: 50,
-          },
-          isRtl: true
-      });
-      // To switch to RTL...
+    const muiTheme = getMuiTheme({
+      appBar: {
+        height: 50,
+      },
+      isRtl: true
+    });
+    // To switch to RTL...
 
-      const rightButtons = (
-          <div>
-              <Link to='register'>  <FlatButton label="הירשם"  /></Link>
-              <Link to='login'> <FlatButton label="התחבר"  /></Link>
-          </div>
-      );
+    const rightButtons = (
+      <div>
+        <Link to='register'>  <FlatButton label="הירשם" /></Link>
+        <Link to='login'> <FlatButton label="התחבר" /></Link>
+      </div>
+    );
 
 
-      return <MuiThemeProvider muiTheme={muiTheme}>
-          <AppBar title="Tichmi" iconElementRight={rightButtons}/>
-          <Finder/>
-          <Teachers/>
-      </MuiThemeProvider>;
+    return <MuiThemeProvider muiTheme={muiTheme}>
+      <div>
+        <AppBar title="Tichmi" iconElementRight={rightButtons} />
+        <Finder />
+        <Teachers />
+      </div>
+    </MuiThemeProvider>;
   }
 }
 

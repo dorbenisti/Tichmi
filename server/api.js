@@ -16,7 +16,7 @@ api.get('/express-test', (req, res) => res.send({ express: 'working!' })) //demo
 }))
 
 .get('/user', (req, res) => {
-    res.send(req.user.email);
+    res.send((req.user && req.user.email) || '');
 })
 
 // No routes matched? 404.

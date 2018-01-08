@@ -8,7 +8,7 @@ import Teachers from "../App/Teachers";
 export default class Register extends Component {
     render() {
         return (
-            <div className={classnames('TeacherMain')}>
+            <div>
                 <h1>עמוד הרשמה</h1>
             </div>
         );
