@@ -7,10 +7,12 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import Teachers from "./Teachers";
+import Teachers from "../Teachers/Teachers";
 import FlatButton from 'material-ui/FlatButton';
 import SearchBox from "../SearchBox/SearchBox";
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { LoginActions } from "../../actions";
 
 class App extends Component {
 
@@ -24,26 +26,44 @@ class App extends Component {
     });
     // To switch to RTL...
 
-    const rightButtons = (
-      <div>
-        <Link to='register'>  <FlatButton label="הירשם" /></Link>
-        <Link to='login'> <FlatButton label="התחבר" /></Link>
-      </div>
-    );
+    let rightButtons;
 
+    if (this.props.user) {
+      rightButtons = (
+        <div>
+          <span>ברוך הבא {this.props.user}</span>
+          <FlatButton onClick={this.props.actions.logout} label="התנתק"></FlatButton>
+        </div>
+      );
+    } else {
+      rightButtons = (
+        <div>
+          <Link to='register'>  <FlatButton label="הירשם" /></Link>
+          <Link to='login'> <FlatButton label="התחבר" /></Link>
+        </div>
+      );
+    }
 
-    return <MuiThemeProvider muiTheme={muiTheme}>
+    return (<MuiThemeProvider muiTheme={muiTheme}>
       <div>
         <AppBar title="Tichmi" iconElementRight={rightButtons} />
         <SearchBox />
         <Teachers />
       </div>
-    </MuiThemeProvider>;
+    </MuiThemeProvider>);
   }
 }
 
 function mapStateToProps(state) {
-  return { };
+  return {
+    user: state.login.user
+  };
 }
 
-export default connect(mapStateToProps)(App);
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(LoginActions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

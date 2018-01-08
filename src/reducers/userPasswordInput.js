@@ -1,4 +1,4 @@
-import { USER_CHANGED, PASSWORD_CHANGED } from "../actions";
+import { USER_CHANGED, PASSWORD_CHANGED } from "../constants";
 
 const defaultValue = {
     user: '',
@@ -11,6 +11,6 @@ export default (state = defaultValue, action) => {
             return {...state, user: action.user};
         case PASSWORD_CHANGED:
             return {...state, password: action.password};
-        default: return state;
+        default: return { ...state, user: '', password: '' };
     }
 };

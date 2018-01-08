@@ -1,0 +1,18 @@
+.teacherImageProfile{
+    width: 150px;
+    height: 150px;
+    display: inline-block;
+  }
+  
+  .teacherDetails{
+    background-color: aquamarine;
+    width: 270px;
+    height: 150px;
+    display: inline-block;
+    position: absolute;
+  }
+  
+  .teacher{
+   /* display: inline-block;*/
+    margin: 10px;
+  }
