@@ -1,4 +1,4 @@
-import rootReducer from './reducers';
+import rootReducer from '../reducers';
 import { routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk';
 import { applyMiddleware, createStore } from 'redux';

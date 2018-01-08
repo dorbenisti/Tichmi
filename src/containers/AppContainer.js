@@ -6,8 +6,6 @@ import App from '../components/App/App'
 
 function mapStateToProps(state) {
   return {
-    results: state.demo.results,
-    expressTestPending: state.server.expressTestPending
   }
 }
 

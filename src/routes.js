@@ -6,7 +6,7 @@ import Register from "./containers/RegisterContainer";
 
 import { Route } from 'react-router-dom';
 import { ConnectedRouter as Router } from "react-router-redux";
-import history from "./history";
+import history from "./helpers/history";
 
 const Routes = () => {
   return (
