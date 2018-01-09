@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './style.css';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import {GridList, GridTile} from 'material-ui/GridList';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TeachersActions } from "../../actions";
@@ -26,11 +27,15 @@ class Teachers extends Component {
                 <h1>loading...</h1>
             )
         } else {
-            return <div>
-                {this.props.teachers.map(teacherName => (
-                    <Teacher firstName={teacherName} key={teacherName} />
-                ))}
-            </div>;
+            return (
+                <div>
+                    <GridList>
+                    {this.props.teachers.map(teacherName => (
+                        <GridTile><Teacher firstName={teacherName} key={teacherName} /></GridTile>
+                    ))}
+                    </GridList>
+                </div>
+            )
         }
     }
 }
