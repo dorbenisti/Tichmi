@@ -31,7 +31,7 @@ class Teachers extends Component {
                 <div>
                     <GridList>
                     {this.props.teachers.map(teacherName => (
-                        <GridTile><Teacher firstName={teacherName} key={teacherName} /></GridTile>
+                        <GridTile key={teacherName}><Teacher firstName={teacherName} /></GridTile>
                     ))}
                     </GridList>
                 </div>

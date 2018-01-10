@@ -13,16 +13,16 @@ class Register extends Component {
     render() {
         return (
             <MuiThemeProvider>
-            <form className={styles.form} onSubmit={event => this.props.loginActions.register(event, { email: this.props.user, password: this.props.password })}>
-                <h2>הרשמה</h2>
-                <div>
-                    <TextField type="email" name="email" floatingLabelText="אימייל" value={this.props.user} onChange={event => this.props.userPasswordFormActions.usernameChanged(event.target.value)} required />
-                </div>
-                <div>
-                    <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={this.props.password} onChange={event => this.props.userPasswordFormActions.passwordChanged(event.target.value)} required />
-                </div>
-                <RaisedButton type="submit" primary={true}>הירשם</RaisedButton>
-            </form>
+                <form className={styles.form} onSubmit={event => this.props.registerActions.register(event, { email: this.props.user, password: this.props.password })}>
+                    <h2>הרשמה</h2>
+                    <div>
+                        <TextField type="email" name="email" floatingLabelText="אימייל" value={this.props.user} onChange={event => this.props.userPasswordFormActions.usernameChanged(event.target.value)} required />
+                    </div>
+                    <div>
+                        <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={this.props.password} onChange={event => this.props.userPasswordFormActions.passwordChanged(event.target.value)} required />
+                    </div>
+                    <RaisedButton type="submit" primary={true}>הירשם</RaisedButton>
+                </form>
             </MuiThemeProvider>
         );
     }
