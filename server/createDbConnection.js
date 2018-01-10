@@ -1,13 +1,22 @@
 const mysql = require('mysql');
+const os = require('os');
 
 module.exports = () => {
-    const connection = mysql.createConnection({
-        host     : 'localhost',
-        user     : 'root',
-        password : '1234'
-      });
 
-    connection.query('USE tichmi');	
+    const request = {
+        host: 'localhost',
+        user: 'root',
+        password: '1234'
+    };
+
+    // Patch for Avi - my work machine DB doesn't have a password :(
+    if (os.hostname() === 'MTLVIT1031045') {
+        delete request.password;
+    }
+
+    const connection = mysql.createConnection(request);
+
+    connection.query('USE tichmi');
 
     return connection;
 };

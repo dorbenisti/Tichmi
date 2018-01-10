@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
 import Teacher from "../Teacher/Teacher";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { connect } from "react-redux";
 
 import styles from './style.css';
 
 class TeacherDetailsView extends Component {
-
-    constructor(props) {
-        super(props);
-    }
-
     render() {
+        const [ firstName ] = this.props.id.split('_');
         return (
             <MuiThemeProvider>
-                <Teacher firstName={this.props.firstName} key={this.props.firstName} />
+                <Teacher firstName={firstName} />
             </MuiThemeProvider>
         );
     }
 }
 
-export default TeacherDetailsView;
+const mapStateToProps = (state, ownProps) => {
+    const { id } = ownProps.match.params;
+
+    return { id };
+};
+
+export default connect(mapStateToProps)(TeacherDetailsView);

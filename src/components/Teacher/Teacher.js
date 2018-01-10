@@ -9,6 +9,7 @@ class Teacher extends Component {
 
     constructor(props) {
         super(props);
+        
         this.state = {
             firstName: props.firstName ? props.firstName : "בר",
             lastName: props.lastName ? props.lastName : "יעקב",
@@ -17,7 +18,7 @@ class Teacher extends Component {
             rate: props.rate ? props.rate : 4,
             reviewsCount: props.reviewsCount ? props.reviewsCount : 5,
             description: props.description ? props.description : "מורה טובה",
-            imagePath: props.imagePath ? props.imagePath : "images/dani.jpg",
+            imagePath: props.imagePath ? props.imagePath : "/images/dani.jpg",
         }
 
 
@@ -25,7 +26,7 @@ class Teacher extends Component {
 
     render(){
         return <div className={styles.teacher}>
-            <Link to='/teacherDetails'>
+            <Link to={`/teacherDetails/${this.state.firstName}_${this.state.lastName}`}>
                 <Card>
                 <img src={this.state.imagePath} className={styles.teacherImageProfile}/>
                 <div className={styles.teacherDetails}>
