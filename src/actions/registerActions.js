@@ -1,5 +1,6 @@
 import { REGISTER_FAILURE, REGISTER_SUCCESS, REGISTER_CALLED } from "../constants";
-import { push } from 'react-router-redux'
+import { push } from 'react-router-redux';
+import { LoginActions } from "./loginActions";
 import axios from 'axios';
 
 const registrationCalled = () => {
@@ -24,6 +25,11 @@ const register = (event, userDetails) => {
         axios.post('/api/register', userDetails)
             .then(res => {
                 dispatch(registrationSuccess())
+
+                axios.get('/api/user').then(res => {
+                    dispatch(LoginActions.loginSuccess(res.data));
+                });
+
                 dispatch(push('/'));
             })
             .catch(err => dispatch(registrationFailure(err)));

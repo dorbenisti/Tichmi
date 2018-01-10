@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styles from './style.css';
+import Card from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router-dom';
@@ -24,7 +25,8 @@ class Teacher extends Component {
 
     render(){
         return <div className={styles.teacher}>
-            <Link to='teacher'>
+            <Link to='/teacherDetails'>
+                <Card>
                 <img src={this.state.imagePath} className={styles.teacherImageProfile}/>
                 <div className={styles.teacherDetails}>
                     <h5 style={{marginRight: '10px'}}>{this.state.firstName} </h5>
@@ -32,6 +34,7 @@ class Teacher extends Component {
                     <h5 style={{marginRight: '10px'}}>{this.state.description}</h5>
                     <h4 >{this.state.price}</h4>
                 </div>
+                </Card>
             </Link>
         </div>;
     }

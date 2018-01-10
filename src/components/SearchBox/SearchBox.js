@@ -11,7 +11,7 @@ class SearchBox extends Component {
             <TextField
                 hintText="תחום עיסוק"
             />
-            <RaisedButton label="חפש" secondary={true} />
+            <RaisedButton label="חפש" secondary={true} className={styles.button}/>
         </div>;
     }
 }

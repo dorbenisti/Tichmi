@@ -58,5 +58,6 @@ const logout = (event) => {
 
 export const LoginActions = {
     login,
-    logout
+    logout,
+    loginSuccess
 };

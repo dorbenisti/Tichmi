@@ -30,16 +30,16 @@ class App extends Component {
 
     if (this.props.user) {
       rightButtons = (
-        <div>
+        <div className={styles.rightButtons}>
           <span>ברוך הבא {this.props.user}</span>
-          <FlatButton onClick={this.props.actions.logout} label="התנתק"></FlatButton>
+          <RaisedButton className={styles.link} onClick={this.props.actions.logout} label="התנתק"/>
         </div>
       );
     } else {
       rightButtons = (
-        <div>
-          <Link to='register'>  <FlatButton label="הירשם" /></Link>
-          <Link to='login'> <FlatButton label="התחבר" /></Link>
+        <div className={styles.rightButtons}>
+          <Link to='/register' className={styles.link}><RaisedButton label="הירשם"/></Link>
+          <Link to='/login' className={styles.link}><RaisedButton label="התחבר"/></Link>
         </div>
       );
     }
