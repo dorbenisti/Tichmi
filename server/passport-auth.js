@@ -42,12 +42,10 @@ module.exports = passport => {
             // find a user whose email is the same as the forms email
             // we are checking to see if the user trying to login already exists
             connection.query("select * from user where email=?", [email], function (err, rows) {
-                console.log(rows);
-                console.log("above row object");
                 if (err)
                     return done(err);
                 if (rows.length) {
-                    return done(null, false, { message: 'That email is already taken.' });
+                    return done(null, false, 'That email is already taken.');
                 } else {
 
                     // if there is no user with that email
@@ -60,7 +58,6 @@ module.exports = passport => {
                     newUserMysql.password = passwordHash;
 
                     const insertQuery = "INSERT INTO user ( email, password ) values (?,?)";
-                    console.log(insertQuery);
                     connection.query(insertQuery, [email, passwordHash], function (err, rows) {
 
                         if (err) {
@@ -98,7 +95,7 @@ module.exports = passport => {
 
                 // if the user is found but the password is wrong
                 if (rows[0].password !== sha512(password))
-                    return done(null, false, { message: 'Oops! Wrong password.' });
+                    return done(null, false, 'Oops! Wrong password.');
 
                 // all is well, return successful user
                 return done(null, rows[0]);

@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const uuidv4 = require('uuid/v4');
 
 const app = express();
 
@@ -23,7 +22,7 @@ app.use(express.static(path.resolve(__dirname, '..', 'build')))
 app.use('/images', express.static(path.resolve(__dirname, '..', 'src', 'images')))
 // passport
 app.use(cookieParser());
-app.use(session({ secret: uuidv4() }));
+app.use(session({ secret: '677E36AE-E30C-411B-8B36-1152E6B45648' }));
 app.use(passport.initialize());
 app.use(passport.session());
 // Serve our api

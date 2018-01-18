@@ -1,19 +1,13 @@
 const api = module.exports = require('express').Router();
 const passport = require('passport');
 
-api.get('/express-test', (req, res) => res.send({ express: 'working!' })) //demo route to prove api is working
+const sendOk = (req, res) => {
+    res.send(req.user);
+};
 
-    // process the signup form
-    .post('/register', passport.authenticate('local-signup', {
-        successRedirect: '/',
-        failureRedirect: '/register',
-    }))
+api.post('/register', passport.authenticate('local-signup', { failureMessage: true }), sendOk)
 
-    // process the login form
-    .post('/login', passport.authenticate('local-login', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-    }))
+    .post('/login', passport.authenticate('local-login', { failureMessage: true }), sendOk)
 
     .get('/user', (req, res) => {
         if (req.user && req.user.email) {
