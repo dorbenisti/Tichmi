@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `tichmi` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `tichmi`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: tichmi
@@ -52,11 +54,13 @@ CREATE TABLE `lesson` (
   `lesson_time` datetime NOT NULL,
   `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` int(11) NOT NULL DEFAULT '0',
-  `rating` int(11) DEFAULT NULL,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`student_id`,`teacher_id`,`lesson_time`),
+  `subject_id` int(11) NOT NULL,
   KEY `lesson_teacher_idx` (`teacher_id`),
-  CONSTRAINT `lesson_student` FOREIGN KEY (`student_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  KEY `lesson_student_idx` (`student_id`),
+  KEY `lesson_subject_idx` (`subject_id`),
+  CONSTRAINT `lesson_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `lesson_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `lesson_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -68,6 +72,63 @@ CREATE TABLE `lesson` (
 LOCK TABLES `lesson` WRITE;
 /*!40000 ALTER TABLE `lesson` DISABLE KEYS */;
 /*!40000 ALTER TABLE `lesson` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `review`
+--
+
+DROP TABLE IF EXISTS `review`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `review` (
+  `teacher_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `rating` int(1) NOT NULL,
+  `content` varchar(200) NOT NULL,
+  PRIMARY KEY (`teacher_id`,`student_id`),
+  KEY `review_student_idx` (`student_id`),
+  CONSTRAINT `review_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `review_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `review`
+--
+
+LOCK TABLES `review` WRITE;
+/*!40000 ALTER TABLE `review` DISABLE KEYS */;
+/*!40000 ALTER TABLE `review` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `student`
+--
+
+DROP TABLE IF EXISTS `student`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `student` (
+  `id` int(11) NOT NULL,
+  `max_price` int(11) NOT NULL,
+  `max_km_distance` int(11) NOT NULL,
+  `want_group_lesson` int(1) NOT NULL DEFAULT '0',
+  `min_price` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `student_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `student`
+--
+
+LOCK TABLES `student` WRITE;
+/*!40000 ALTER TABLE `student` DISABLE KEYS */;
+/*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -104,15 +165,9 @@ DROP TABLE IF EXISTS `teacher`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `teacher` (
   `id` int(11) NOT NULL,
-  `subject_id` int(11) NOT NULL,
-  `city_id` int(11) NOT NULL,
   `phone` varchar(20) NOT NULL,
   `price` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `teacher_city_idx` (`city_id`),
-  KEY `teacher_subject_idx` (`subject_id`),
-  CONSTRAINT `teacher_city` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `teacher_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `teacher_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -123,7 +178,34 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
+INSERT INTO `teacher` VALUES (2,'054-5879865',50);
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `teacher_to_subject`
+--
+
+DROP TABLE IF EXISTS `teacher_to_subject`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `teacher_to_subject` (
+  `teacher_id` int(11) NOT NULL,
+  `subject_id` int(11) NOT NULL,
+  PRIMARY KEY (`teacher_id`,`subject_id`),
+  KEY `teacher_to_subject__subject_idx` (`subject_id`),
+  CONSTRAINT `teacher_to_subject__subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `teacher_to_subject__teacher` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `teacher_to_subject`
+--
+
+LOCK TABLES `teacher_to_subject` WRITE;
+/*!40000 ALTER TABLE `teacher_to_subject` DISABLE KEYS */;
+/*!40000 ALTER TABLE `teacher_to_subject` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -138,9 +220,15 @@ CREATE TABLE `user` (
   `email` varchar(100) NOT NULL,
   `password` varchar(200) NOT NULL,
   `is_teacher` tinyint(1) NOT NULL DEFAULT '0',
+  `gender` int(1) NOT NULL,
+  `first_name` varchar(45) NOT NULL,
+  `last_name` varchar(45) NOT NULL,
+  `city_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `username_UNIQUE` (`email`),
+  KEY `user_city_idx` (`city_id`),
+  CONSTRAINT `user_city` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +237,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'a@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0);
+INSERT INTO `user` VALUES (1,'a@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'t','t',2),(2,'a1@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,1,'f','f',2);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -162,4 +250,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-12 20:37:54
+-- Dump completed on 2018-02-14 18:31:31
