@@ -72,9 +72,7 @@ class Register extends Component {
                 <div>
                     <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={state.password} onChange={handleInputChange} required />
                 </div>
-                <div>
-                    <Toggle label="מורה?" labelPosition="right" toggled={!!state.is_teacher} onToggle={(_, isInputChecked) => this.setValue('is_teacher', isInputChecked ? 1 : 0)} />
-                </div>
+                    <Toggle label="מורה?" labelPosition="right" labelStyle={{ marginRight: '10px' }} toggled={!!state.is_teacher} onToggle={(_, isInputChecked) => this.setValue('is_teacher', isInputChecked ? 1 : 0)} />
                 <div>
                     <SelectField
                         floatingLabelText="מין"
