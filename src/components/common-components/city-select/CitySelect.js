@@ -17,7 +17,10 @@ export default class CitySelect extends Component {
     }
 
     componentDidMount() {
-        if (this.state.cities) return;
+        if (this.state.cities) {
+            this.props.onChange(this.state.cities[0]);
+            return;
+        }
 
         axios.get('/api/cities').then(res => {
             CITIES = res.data;
@@ -25,6 +28,8 @@ export default class CitySelect extends Component {
             this.setState({
                 cities: CITIES
             });
+
+            this.props.onChange(CITIES[0]);
         });
     }
 
@@ -36,7 +41,7 @@ export default class CitySelect extends Component {
 
         let currValue = cities[0];
         if (typeof value === 'number') {
-            currValue = cities.filter(c => c.id === value);
+            currValue = cities.find(c => c.id === value);
         }
 
         return (

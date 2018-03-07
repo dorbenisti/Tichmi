@@ -19,9 +19,18 @@ module.exports = passport => {
 
     // used to deserialize the user
     passport.deserializeUser(function (id, done) {
-        connection.query('select * from user where id=?', [id], function (err, rows) {
-            done(err, rows[0]);
+        getUser(connection, "id", id, user => {
+            return done(null, user);
+        }, (error, isCrucial) => {
+            if (isCrucial) {
+                done(error);
+            } else {
+                done(null, false, error);
+            }
         });
+        // connection.query('select * from user where id=?', [id], function (err, rows) {
+        //     done(err, rows[0]);
+        // });
     });
 
 
@@ -57,16 +66,35 @@ module.exports = passport => {
                     newUserMysql.email = email;
                     newUserMysql.password = passwordHash;
 
-                    const insertQuery = "INSERT INTO user ( email, password ) values (?,?)";
-                    connection.query(insertQuery, [email, passwordHash], function (err, rows) {
+                    const { first_name, last_name, is_teacher, gender, city_id } = req.body;
+
+                    const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id ) values (?,?,?,?,?,?,?)";
+                    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, is_teacher, city_id], function (err, rows) {
 
                         if (err) {
                             return done(err);
                         }
-                        
-                        newUserMysql.id = rows.insertId;
 
-                        return done(null, newUserMysql);
+                        let secondInsertQuery, secondQueryParams;
+                        if (is_teacher) {
+                            const { phone, price } = req.body;
+                            secondInsertQuery = "INSERT INTO teacher (id, phone, price) values (?,?,?)";
+                            secondQueryParams = [rows.insertId, phone, price];
+                        } else {
+                            const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
+                            secondInsertQuery = "INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)";
+                            secondQueryParams = [rows.insertId, min_price, max_price, max_km_distance, want_group_lesson];
+                        }
+
+                        connection.query(secondInsertQuery, secondQueryParams, (err2, rows2) => {
+                            if (err2) {
+                                return done(err2);
+                            }
+
+                            const { password, ...userWithoutPassword } = { ...newUserMysql, id: rows.insertId, ...rows2[0] };
+
+                            return done(null, userWithoutPassword);
+                        });
                     });
                 }
             });
@@ -86,21 +114,43 @@ module.exports = passport => {
     },
         function (req, email, password, done) { // callback with email and password from our form
 
-            connection.query("SELECT * FROM `user` WHERE `email`=?", [email], function (err, rows) {
-                if (err)
-                    return done(err);
-                if (!rows.length) {
-                    return done(null, false, {message :'No user found.' }); 
+            getUser(connection, "`email`", email, user => {
+                const { password: userPassword, ...userWithoutPassword } = user;
+
+                if (userPassword !== sha512(password)) {
+                    return done(null, false, 'Oops! Wrong password.');
                 }
 
-                // if the user is found but the password is wrong
-                if (rows[0].password !== sha512(password))
-                    return done(null, false, 'Oops! Wrong password.');
-
-                // all is well, return successful user
-                return done(null, rows[0]);
-
+                return done(null, userWithoutPassword);
+            }, (error, isCrucial) => {
+                if (isCrucial) {
+                    done(error);
+                } else {
+                    done(null, false, error);
+                }
             });
         }));
-
 };
+
+function getUser(connection, whereFieldName, whereFieldValue, callback, errCallback) {
+    connection.query(`SELECT * FROM user WHERE ${whereFieldName}=?`, [whereFieldValue], function (err, rows) {
+        if (err)
+            return errCallback(err, true);
+        if (!rows.length) {
+            return errCallback('User not found', false);
+        }
+
+        const userRow = rows[0];
+        const { id, is_teacher } = userRow;
+
+        connection.query(`SELECT * FROM ${is_teacher ? 'teacher' : 'student'} WHERE id=?`, [id], function (err, rows) {
+            if (err)
+                return errCallback(err, true);
+            if (!rows.length) {
+                return errCallback('User not found', false);
+            }
+
+            callback({ ...userRow, ...rows[0]});
+        });
+    });
+}

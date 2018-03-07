@@ -30,7 +30,11 @@ class Register extends Component {
             gender: 0,
             city_id: null,
             phone: '',
-            price: 0
+            price: 0,
+            min_price: 0,
+            max_price: 0,
+            max_km_distance: 0,
+            want_group_lesson: false
         };
 
         this.handleInputChange = handleInputChange.bind(this);
@@ -39,12 +43,16 @@ class Register extends Component {
 
     render() {
 
-        const { is_teacher } = this.state;
+        const { state } = this;
+        const { is_teacher } = state;
 
         return (
             <MuiThemeProvider>
                 <form className={styles.form} onSubmit={event => this.props.registerActions.register(event, this.state)}>
                     <h2>הרשמה</h2>
+                    <div>
+                        <CustomToggle label="מורה?" value={!!state.is_teacher} fieldName="is_teacher" setValue={this.setValue} />
+                    </div>
                     {this.renderGeneralUserForm()}
                     {is_teacher && this.renderTeacherForm()}
                     {!is_teacher && this.renderStudentForm()}
@@ -72,7 +80,7 @@ class Register extends Component {
                 <div>
                     <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={state.password} onChange={handleInputChange} required />
                 </div>
-                    <Toggle label="מורה?" labelPosition="right" labelStyle={{ marginRight: '10px' }} toggled={!!state.is_teacher} onToggle={(_, isInputChecked) => this.setValue('is_teacher', isInputChecked ? 1 : 0)} />
+              
                 <div>
                     <SelectField
                         floatingLabelText="מין"
@@ -89,9 +97,9 @@ class Register extends Component {
                 <div>
                     <TextField name="last_name" floatingLabelText="שם משפחה" value={state.last_name} onChange={handleInputChange} required />
                 </div>
-                {/* <div>
+                <div>
                     <CitySelect onChange={city => this.setValue('city_id', city.id)} value={state.city_id} />
-                </div> */}
+                </div>
             </React.Fragment>
         );
     }
@@ -119,11 +127,28 @@ class Register extends Component {
         return (
             <React.Fragment>
                 <div>
-                    Student stuff
+                    <TextField type="number" name="min_price" floatingLabelText="מחיר מינימלי" value={state.min_price} onChange={handleInputChange} required />
+                </div>
+                <div>
+                    <TextField type="number" name="max_price" floatingLabelText="מחיר מקסימלי" value={state.max_price} onChange={handleInputChange} required />
+                </div>
+                <div>
+                    <TextField type="number" name="max_km_distance" floatingLabelText="מרחק מקסימלי בקילומטרים" value={state.max_km_distance} onChange={handleInputChange} required />
+                </div>
+                <div>
+                    <CustomToggle label="מעוניין בשיעורים קבוצתיים?" value={!!state.want_group_lesson} fieldName="want_group_lesson" setValue={this.setValue} />
                 </div>
             </React.Fragment>
         );
     }
+}
+
+function CustomToggle({ value, fieldName, setValue, ...rest }) {
+    return (
+        <div>
+            <Toggle {...rest} labelPosition="right" labelStyle={{ marginRight: '10px' }} toggled={!!value} onToggle={(_, isInputChecked) => setValue(fieldName, isInputChecked ? 1 : 0)} />
+        </div>
+    );
 }
 
 
