@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `tichmi` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `tichmi`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: tichmi
@@ -220,7 +218,7 @@ CREATE TABLE `user` (
   `email` varchar(100) NOT NULL,
   `password` varchar(200) NOT NULL,
   `is_teacher` tinyint(1) NOT NULL DEFAULT '0',
-  `gender` int(1) NOT NULL,
+  `gender` int(1) NOT NULL COMMENT '0=male\n1=female',
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `city_id` int(11) NOT NULL,
@@ -250,4 +248,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-14 18:31:31
+-- Dump completed on 2018-03-07 15:35:40

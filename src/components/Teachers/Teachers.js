@@ -10,10 +10,8 @@ import Teacher from "../Teacher/Teacher";
 
 class Teachers extends Component {
 
-    constructor(props) {
-        super(props);
-
-        props.actions.getAllTeachers();
+    componentDidMount() {
+        this.props.actions.getAllTeachers();
     }
 
     render() {
