@@ -56,46 +56,7 @@ module.exports = passport => {
                 if (rows.length) {
                     return done(null, false, 'That email is already taken.');
                 } else {
-
-                    // if there is no user with that email
-                    // create the user
-                    let newUserMysql = new Object();
-
-                    const passwordHash = sha512(password);
-
-                    newUserMysql.email = email;
-                    newUserMysql.password = passwordHash;
-
-                    const { first_name, last_name, is_teacher, gender, city_id } = req.body;
-
-                    const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id ) values (?,?,?,?,?,?,?)";
-                    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, is_teacher, city_id], function (err, rows) {
-
-                        if (err) {
-                            return done(err);
-                        }
-
-                        let secondInsertQuery, secondQueryParams;
-                        if (is_teacher) {
-                            const { phone, price } = req.body;
-                            secondInsertQuery = "INSERT INTO teacher (id, phone, price) values (?,?,?)";
-                            secondQueryParams = [rows.insertId, phone, price];
-                        } else {
-                            const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
-                            secondInsertQuery = "INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)";
-                            secondQueryParams = [rows.insertId, min_price, max_price, max_km_distance, want_group_lesson];
-                        }
-
-                        connection.query(secondInsertQuery, secondQueryParams, (err2, rows2) => {
-                            if (err2) {
-                                return done(err2);
-                            }
-
-                            const { password, ...userWithoutPassword } = { ...newUserMysql, id: rows.insertId, ...rows2[0] };
-
-                            return done(null, userWithoutPassword);
-                        });
-                    });
+                    register(req, email, password, done);
                 }
             });
         }));
@@ -143,14 +104,68 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
         const userRow = rows[0];
         const { id, is_teacher } = userRow;
 
-        connection.query(`SELECT * FROM ${is_teacher ? 'teacher' : 'student'} WHERE id=?`, [id], function (err, rows) {
+        let queries = [
+            `SELECT * FROM ${is_teacher ? 'teacher' : 'student'} WHERE id=?`,
+            'SELECT s.id as id, s.display_name as `name` ' +
+            'FROM teacher_to_subject m2m, subject s ' +
+            'WHERE m2m.subject_id = s.id AND m2m.teacher_id=?'
+        ];
+
+        let params = [id, id];
+
+        connection.query(queries.join(';'), params, function (err, results) {
             if (err)
                 return errCallback(err, true);
-            if (!rows.length) {
+            if (!results[0].length) {
                 return errCallback('User not found', false);
             }
 
-            callback({ ...userRow, ...rows[0]});
+            callback({ ...userRow, ...results[0][0], subjects: results[1] });
+        });
+    });
+}
+
+function register(req, email, password, done) {
+    let newUserMysql = new Object();
+
+    const passwordHash = sha512(password);
+
+    newUserMysql.email = email;
+    newUserMysql.password = passwordHash;
+
+    const { first_name, last_name, is_teacher, gender, city_id, subjects } = req.body;
+
+    const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id ) values (?,?,?,?,?,?,?)";
+    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, is_teacher, city_id], function (err, rows) {
+
+        if (err) {
+            return done(err);
+        }
+
+        let subInsertQueries = [], secondInsertQueriesParams;
+        if (is_teacher) {
+            const { phone, price } = req.body;
+            subInsertQueries.push("INSERT INTO teacher (id, phone, price) values (?,?,?)");
+            secondInsertQueriesParams = [rows.insertId, phone, price];
+        } else {
+            const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
+            subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
+            secondInsertQueriesParams = [rows.insertId, min_price, max_price, max_km_distance, want_group_lesson];
+        }
+
+        for (let subject of subjects) {
+            subInsertQueries.push("INSERT INTO teacher_to_subject (teacher_id, subject_id) values (?,?)");
+            secondInsertQueriesParams.push(rows.insertId, subject.id);
+        }
+
+        connection.query(subInsertQueries.join(';'), secondInsertQueriesParams, (err2, rows2) => {
+            if (err2) {
+                return done(err2);
+            }
+
+            const { password, ...userWithoutPassword } = { ...newUserMysql, id: rows.insertId, ...rows2[0][0], subjects };
+
+            return done(null, userWithoutPassword);
         });
     });
 }

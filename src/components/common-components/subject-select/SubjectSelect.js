@@ -5,20 +5,20 @@ import PropTypes from "prop-types";
 import EntitySelect from "../entity-select/EntitySelect";
 import ServerDataCache from "../entity-select/ServerDataCache";
 
-var citiesCache = new ServerDataCache('/api/cities');
+var subjectsCache = new ServerDataCache('/api/subjects');
 
-export default class CitySelect extends Component {
+export default class SubjectSelect extends Component {
     
     render() {
         const { onChange, value } = this.props;
 
         return (
-            <EntitySelect onChange={onChange} value={value} valuesCache={citiesCache} labelText="עיר"/>
+            <EntitySelect onChange={onChange} value={value} valuesCache={subjectsCache} labelText="נושאים" multiple={true} />
         );
     }
 
     static propTypes = {
         onChange: PropTypes.func.isRequired,
-        value: PropTypes.number
+        value: PropTypes.arrayOf(PropTypes.number)
     };
 }

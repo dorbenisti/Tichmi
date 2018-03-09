@@ -6,7 +6,8 @@ module.exports = () => {
     const request = {
         host: 'localhost',
         user: 'root',
-        password: '1234'
+        password: '1234',
+        multipleStatements: true
     };
 
     // Patch for Avi - my work machine DB doesn't have a password :(

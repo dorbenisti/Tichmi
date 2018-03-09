@@ -11,6 +11,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Toggle from 'material-ui/Toggle';
 
 import CitySelect from "../common-components/city-select/CitySelect";
+import SubjectSelect from "../common-components/subject-select/SubjectSelect";
 
 import { RegistrationActions } from "../../actions";
 import { handleInputChange } from "common"
@@ -34,7 +35,8 @@ class Register extends Component {
             min_price: 0,
             max_price: 0,
             max_km_distance: 0,
-            want_group_lesson: false
+            want_group_lesson: false,
+            subjects: []
         };
 
         this.handleInputChange = handleInputChange.bind(this);
@@ -115,6 +117,9 @@ class Register extends Component {
                 </div>
                 <div>
                     <TextField type="number" name="price" floatingLabelText="מחיר" value={state.price} onChange={handleInputChange} required />
+                </div>
+                <div>
+                    <SubjectSelect onChange={subject => this.setValue('subjects', subject)} value={state.subjects.map(s => s.id)} />
                 </div>
             </React.Fragment>
         );

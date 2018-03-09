@@ -30,7 +30,19 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
 
     .get('/cities', (req, res) => {
         useDbConnection(conn => {
-            conn.query('select * from city order by name ASC', (err, rows) => {
+            conn.query('select * from city order by `name` ASC', (err, rows) => {
+                if (err) {
+                   return res.status(500).send(err);
+                }
+
+                res.json(rows);
+            });
+        });
+    })
+
+    .get('/subjects', (req, res) => {
+        useDbConnection(conn => {
+            conn.query('select id, display_name as `name` from subject order by `display_name` ASC', (err, rows) => {
                 if (err) {
                    return res.status(500).send(err);
                 }
