@@ -15,7 +15,6 @@ class Teachers extends Component {
     }
 
     render() {
-
         if (this.props.error) {
             return (
                 <h1>Error occured: {this.props.error}</h1>
@@ -27,11 +26,11 @@ class Teachers extends Component {
         } else {
             return (
                 <div>
-                    <GridList>
-                    {this.props.teachers.map(teacherName => (
-                        <GridTile key={teacherName}><Teacher firstName={teacherName} /></GridTile>
+                    {/* <GridList> */}
+                    {this.props.teachers.map(teacher => (
+                        <GridTile key={teacher.id}><Teacher teacher={teacher} /></GridTile>
                     ))}
-                    </GridList>
+                    {/* </GridList> */}
                 </div>
             )
         }

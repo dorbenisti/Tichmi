@@ -1,5 +1,5 @@
 function getUser(connection, whereFieldName, whereFieldValue, callback, errCallback) {
-    connection.query(`SELECT * FROM user WHERE ${whereFieldName}=?`, [whereFieldValue], function (err, rows) {
+    connection.query(`SELECT u.*, c.name as city_name FROM user u, city c WHERE c.id=u.city_id AND u.${whereFieldName}=?`, [whereFieldValue], function (err, rows) {
         if (err)
             return errCallback(err, true);
         if (!rows.length) {
@@ -40,6 +40,48 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
     });
 }
 
+function getAllTeachers(connection, callback, errCallback) {
+    connection.query('SELECT ID from user where is_teacher=1', (err, rows) => {
+        if (err)
+            return errCallback(err, true);
+        if (!rows.length) {
+            return callback([]);
+        }
+
+        let numOfCallbacks = 0;
+        let allTeachers = [];
+
+        const successCallback = teacher => {
+            wrapWithNumOfCallbacks(() => {
+                allTeachers.push(teacher);
+            });
+        };
+
+        const errorCallback = err => {
+            wrapWithNumOfCallbacks(() => {
+            });
+        }
+
+        const wrapWithNumOfCallbacks = (cbk) => {
+            numOfCallbacks++;
+
+            cbk();
+
+            if (numOfCallbacks === rows.length) {
+                callback(allTeachers);
+            }
+        }
+
+
+        for (let teacher of rows) {
+            const { ID } = teacher;
+
+            getUser(connection, 'id', ID, successCallback, errorCallback);
+        }
+    });
+}
+
 module.exports = {
-    getUser
+    getUser,
+    getAllTeachers
 };

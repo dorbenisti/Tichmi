@@ -1,43 +1,51 @@
 import React, { Component } from 'react';
 import styles from './style.css';
-import Card from 'material-ui/Card';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
+import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 
 class Teacher extends Component {
 
     constructor(props) {
         super(props);
-        
+
         this.state = {
-            firstName: props.firstName ? props.firstName : "בר",
-            lastName: props.lastName ? props.lastName : "יעקב",
-            city: props.city ? props.city : "תל אביב",
-            price: props.price ? props.price : "150",
-            rate: props.rate ? props.rate : 4,
-            reviewsCount: props.reviewsCount ? props.reviewsCount : 5,
-            description: props.description ? props.description : "מורה טובה",
-            imagePath: props.imagePath ? props.imagePath : "/images/dani.jpg",
-        }
-
-
+            expanded: false
+        };
     }
 
-    render(){
-        return <div className={styles.teacher}>
-            <Link to={`/teacherDetails/2`}>
-                <Card>
-                <img src={this.state.imagePath} className={styles.teacherImageProfile}/>
-                <div className={styles.teacherDetails}>
-                    <h5 style={{marginRight: '10px'}}>{this.state.firstName} </h5>
-                    <h6 style={{marginRight: '10px', marginTop: 0}}>{this.state.city}</h6>
-                    <h5 style={{marginRight: '10px'}}>{this.state.description}</h5>
-                    <h4 >{this.state.price}</h4>
-                </div>
+    render() {
+        const { teacher } = this.props;
+        const { expanded } = this.state;
+
+        const teacherName = `${teacher.first_name} ${teacher.last_name}`;
+
+        const overlay = (
+            <CardTitle title={teacherName} subtitle={teacher.city_name} />
+        );
+
+        return (
+            <Link to={`/teacherDetails/${teacher.id}`}>
+                <Card expanded={expanded} onExpandChange={expanded => this.setState({ expanded })} style={{  width: '400px' }}>
+                    <CardHeader
+                        title={teacherName}
+                        subtitle={teacher.city_name}
+                        avatar="/images/dani.jpg"
+                        actAsExpander={true}
+                        showExpandableButton={true} />
+                    <CardMedia
+                        overlay={overlay}
+                        >
+                        <img src="/images/dani.jpg" style={{ width: '400px', height: '100%', objectFit: 'contain', minWidth: 'unset' }}/>
+                    </CardMedia>
+                    <CardText expandable={true} style={{ textDecoration: 'none' }}>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
+                        Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
+                        Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+                    </CardText>
                 </Card>
             </Link>
-        </div>;
+        );
     }
 }
 

@@ -2,6 +2,7 @@ const api = module.exports = require('express').Router();
 const passport = require('passport');
 
 const openConnection = require('./createDbConnection');
+const { getAllTeachers, getUser } = require('./UserUtils');
 
 const sendOk = (req, res) => {
     res.send(req.user);
@@ -24,8 +25,28 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
         res.sendStatus(200);
     })
 
+    .get('/teacher/:id', (req, res) => {
+        useDbConnection((conn, end) => {
+            getUser(conn, 'id', req.params.id, teacher => {
+                res.json(teacher);
+                end();
+            }, (err) => {
+                res.status(500).send(err);
+                end();
+            });
+        }, true);
+    })
+
     .get('/teachers', (req, res) => {
-        res.json(['אבי', 'דני', 'דור', 'בר']);
+        useDbConnection((conn, end) => {
+            getAllTeachers(conn, teachers => {
+                res.json(teachers);
+                end();
+            }, (err) => {
+                res.status(500).send(err);
+                end();
+            });
+        }, true);
     })
 
     .get('/cities', (req, res) => {
@@ -57,13 +78,16 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
         return res.status(404).end();
     });
 
-function useDbConnection(callback) {
+function useDbConnection(callback, isAsync=false) {
     let connection = null;
+
+    const closeConn = () => connection && connection.end();
+    const currCloseConn = isAsync ? () => {} : closeConn;
 
     try {
         connection = openConnection();
-        callback(connection);
+        callback(connection, closeConn);
     } finally {
-        connection && connection.end();
+        currCloseConn();
     }
 }
