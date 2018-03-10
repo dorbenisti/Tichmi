@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import styles from './style.css';
 import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { List, ListItem } from 'material-ui/List';
+import HouseIcon from "material-ui/svg-icons/social/location-city";
+import MoneyIcon from "material-ui/svg-icons/editor/attach-money";
+import SubjectIcon from "material-ui/svg-icons/action/subject";
 import { Link } from 'react-router-dom';
 
 class Teacher extends Component {
@@ -23,9 +27,12 @@ class Teacher extends Component {
             <CardTitle title={teacherName} subtitle={teacher.city_name} />
         );
 
+        const itemWidth = '500px';
+        const subjectsString = (teacher.subjects.map(s => s.name)).join();
+
         return (
             <Link to={`/teacherDetails/${teacher.id}`}>
-                <Card expanded={expanded} onExpandChange={expanded => this.setState({ expanded })} style={{  width: '400px' }}>
+                <Card expanded={expanded} onExpandChange={expanded => this.setState({ expanded })} style={{ width: itemWidth }}>
                     <CardHeader
                         title={teacherName}
                         subtitle={teacher.city_name}
@@ -33,15 +40,15 @@ class Teacher extends Component {
                         actAsExpander={true}
                         showExpandableButton={true} />
                     <CardMedia
-                        overlay={overlay}
-                        >
-                        <img src="/images/dani.jpg" style={{ width: '400px', height: '100%', objectFit: 'contain', minWidth: 'unset' }}/>
+                        overlay={overlay}>
+                        <img src="/images/dani.jpg" style={{ width: itemWidth, height: '100%', objectFit: 'contain', minWidth: 'unset' }} />
                     </CardMedia>
-                    <CardText expandable={true} style={{ textDecoration: 'none' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-                        Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-                        Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+                    <CardText expandable={true}>
+                        <List>
+                            <ListItem primaryText={teacher.city_name} leftIcon={<HouseIcon />} />
+                            <ListItem primaryText={`₪${teacher.price}`} leftIcon={<MoneyIcon />} />
+                            <ListItem primaryText={subjectsString} leftIcon={<SubjectIcon />} />                            
+                        </List>
                     </CardText>
                 </Card>
             </Link>
