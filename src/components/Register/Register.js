@@ -12,6 +12,7 @@ import Toggle from 'material-ui/Toggle';
 
 import CitySelect from "../common-components/city-select/CitySelect";
 import SubjectSelect from "../common-components/subject-select/SubjectSelect";
+import StarsRating from "../common-components/stars-rating/StarsRating";
 
 import { RegistrationActions } from "../../actions";
 import { handleInputChange } from "common"
@@ -76,6 +77,7 @@ class Register extends Component {
 
         return (
             <React.Fragment>
+                <StarsRating rating={3} disabled={false} onChange={() => {}} />
                 <div>
                     <TextField type="email" name="email" floatingLabelText="אימייל" value={state.email} onChange={handleInputChange} required />
                 </div>

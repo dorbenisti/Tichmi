@@ -2,6 +2,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const { sha512 } = require('js-sha512');
 
 const connection = require('./createDbConnection')();
+const { getUser } = require('./UserUtils');
 
 // expose this function to our app using module.exports
 module.exports = passport => {
@@ -28,9 +29,6 @@ module.exports = passport => {
                 done(null, false, error);
             }
         });
-        // connection.query('select * from user where id=?', [id], function (err, rows) {
-        //     done(err, rows[0]);
-        // });
     });
 
 
@@ -92,38 +90,6 @@ module.exports = passport => {
             });
         }));
 };
-
-function getUser(connection, whereFieldName, whereFieldValue, callback, errCallback) {
-    connection.query(`SELECT * FROM user WHERE ${whereFieldName}=?`, [whereFieldValue], function (err, rows) {
-        if (err)
-            return errCallback(err, true);
-        if (!rows.length) {
-            return errCallback('User not found', false);
-        }
-
-        const userRow = rows[0];
-        const { id, is_teacher } = userRow;
-
-        let queries = [
-            `SELECT * FROM ${is_teacher ? 'teacher' : 'student'} WHERE id=?`,
-            'SELECT s.id as id, s.display_name as `name` ' +
-            'FROM teacher_to_subject m2m, subject s ' +
-            'WHERE m2m.subject_id = s.id AND m2m.teacher_id=?'
-        ];
-
-        let params = [id, id];
-
-        connection.query(queries.join(';'), params, function (err, results) {
-            if (err)
-                return errCallback(err, true);
-            if (!results[0].length) {
-                return errCallback('User not found', false);
-            }
-
-            callback({ ...userRow, ...results[0][0], subjects: results[1] });
-        });
-    });
-}
 
 function register(req, email, password, done) {
     let newUserMysql = new Object();

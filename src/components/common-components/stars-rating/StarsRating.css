@@ -1,0 +1,7 @@
+.custom-stars-rating label:after {
+    font-size: 30px;
+}
+
+.custom-stars-rating > span > span > span {
+    width: 30px !important;
+}

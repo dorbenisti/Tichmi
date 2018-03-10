@@ -26,7 +26,7 @@ class Teacher extends Component {
 
     render(){
         return <div className={styles.teacher}>
-            <Link to={`/teacherDetails/${this.state.firstName}_${this.state.lastName}`}>
+            <Link to={`/teacherDetails/2`}>
                 <Card>
                 <img src={this.state.imagePath} className={styles.teacherImageProfile}/>
                 <div className={styles.teacherDetails}>
