@@ -7,11 +7,7 @@ import styles from './style.css';
 
 class TeacherDetailsView extends Component {
     render() {
-        const [ firstName ] = this.props.id.split('_');
-        return (
-            <MuiThemeProvider>
-                <Teacher firstName={firstName} />
-            </MuiThemeProvider>
+        return (<div/>
         );
     }
 }
