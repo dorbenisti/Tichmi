@@ -77,7 +77,7 @@ class Register extends Component {
 
         return (
             <React.Fragment>
-                <StarsRating rating={3} disabled={false} onChange={() => {}} />
+                {/* <StarsRating rating={3} disabled={false} onChange={() => {}} /> */}
                 <div>
                     <TextField type="email" name="email" floatingLabelText="אימייל" value={state.email} onChange={handleInputChange} required />
                 </div>

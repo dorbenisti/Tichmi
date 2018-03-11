@@ -41,7 +41,9 @@ class Teacher extends Component {
                         showExpandableButton={true} />
                     <CardMedia
                         overlay={overlay}>
-                        <img src={teacher.image_url} alt={teacherName} style={{ width: itemWidth, height: '100%', objectFit: 'contain', minWidth: 'unset' }} />
+                        <img src={teacher.image_url} 
+                             alt={teacherName} 
+                             style={{ width: itemWidth, height: '100%', objectFit: 'contain', minWidth: 'unset' }} />
                     </CardMedia>
                     <CardText expandable={true}>
                         <List>

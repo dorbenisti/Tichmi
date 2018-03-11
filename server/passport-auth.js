@@ -92,14 +92,9 @@ module.exports = passport => {
 };
 
 function register(req, email, password, done) {
-    let newUserMysql = new Object();
-
     const passwordHash = sha512(password);
 
-    newUserMysql.email = email;
-    newUserMysql.password = passwordHash;
-
-    const { first_name, last_name, is_teacher, gender, city_id, subjects } = req.body;
+    const { first_name, last_name, is_teacher, gender, city_id } = req.body;
 
     const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id ) values (?,?,?,?,?,?,?)";
     connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, is_teacher, city_id], function (err, rows) {
@@ -110,26 +105,26 @@ function register(req, email, password, done) {
 
         let subInsertQueries = [], secondInsertQueriesParams;
         if (is_teacher) {
-            const { phone, price } = req.body;
+            const { phone, price, subjects } = req.body;
             subInsertQueries.push("INSERT INTO teacher (id, phone, price) values (?,?,?)");
             secondInsertQueriesParams = [rows.insertId, phone, price];
+
+            for (let subject of subjects) {
+                subInsertQueries.push("INSERT INTO teacher_to_subject (teacher_id, subject_id) values (?,?)");
+                secondInsertQueriesParams.push(rows.insertId, subject.id);
+            }
         } else {
             const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
             subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
             secondInsertQueriesParams = [rows.insertId, min_price, max_price, max_km_distance, want_group_lesson];
         }
 
-        for (let subject of subjects) {
-            subInsertQueries.push("INSERT INTO teacher_to_subject (teacher_id, subject_id) values (?,?)");
-            secondInsertQueriesParams.push(rows.insertId, subject.id);
-        }
-
-        connection.query(subInsertQueries.join(';'), secondInsertQueriesParams, (err2, rows2) => {
-            if (err2) {
-                return done(err2);
+        connection.query(subInsertQueries.join(';'), secondInsertQueriesParams, (err) => {
+            if (err) {
+                return done(err);
             }
 
-            const { password, ...userWithoutPassword } = { ...newUserMysql, id: rows.insertId, ...rows2[0][0], subjects };
+            const { password, ...userWithoutPassword } = { id: rows.insertId, ...req.body };
 
             return done(null, userWithoutPassword);
         });

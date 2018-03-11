@@ -25,17 +25,20 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
         connection.query(queries.join(';'), params, function (err, results) {
             if (err)
                 return errCallback(err, true);
-            if (!results[0].length) {
+
+            const specializedUserDetails = is_teacher ? results[0][0] : results[0];
+
+            if (!specializedUserDetails) {
                 return errCallback('User not found', false);
             }
 
             let extra = {};
 
-            if (results[1]) {
+            if (is_teacher) {
                 extra = { subjects: results[1] };
             }
 
-            callback({ ...userRow, ...results[0][0], ...extra });
+            callback({ ...userRow, ...specializedUserDetails, ...extra });
         });
     });
 }
