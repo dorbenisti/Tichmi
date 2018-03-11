@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.17, for macos10.12 (x86_64)
 --
 -- Host: localhost    Database: tichmi
 -- ------------------------------------------------------
--- Server version	5.7.20-log
+-- Server version	5.6.37
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -165,6 +165,7 @@ CREATE TABLE `teacher` (
   `id` int(11) NOT NULL,
   `phone` varchar(20) NOT NULL,
   `price` int(11) NOT NULL,
+  `image_url` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `teacher_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -176,7 +177,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES (2,'054-5879865',50);
+INSERT INTO `teacher` VALUES (2,'054-5879865',50,'/images/dani.jpg');
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -203,6 +204,7 @@ CREATE TABLE `teacher_to_subject` (
 
 LOCK TABLES `teacher_to_subject` WRITE;
 /*!40000 ALTER TABLE `teacher_to_subject` DISABLE KEYS */;
+INSERT INTO `teacher_to_subject` VALUES (2,2),(2,4),(2,7);
 /*!40000 ALTER TABLE `teacher_to_subject` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,4 +250,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-07 19:25:48
+-- Dump completed on 2018-03-11 17:56:15

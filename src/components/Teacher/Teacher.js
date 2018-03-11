@@ -36,12 +36,12 @@ class Teacher extends Component {
                     <CardHeader
                         title={teacherName}
                         subtitle={teacher.city_name}
-                        avatar="/images/dani.jpg"
+                        avatar={teacher.image_url}
                         actAsExpander={true}
                         showExpandableButton={true} />
                     <CardMedia
                         overlay={overlay}>
-                        <img src="/images/dani.jpg" style={{ width: itemWidth, height: '100%', objectFit: 'contain', minWidth: 'unset' }} />
+                        <img src={teacher.image_url} alt={teacherName} style={{ width: itemWidth, height: '100%', objectFit: 'contain', minWidth: 'unset' }} />
                     </CardMedia>
                     <CardText expandable={true}>
                         <List>
