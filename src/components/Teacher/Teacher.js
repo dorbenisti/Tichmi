@@ -32,7 +32,9 @@ class Teacher extends Component {
 
         return (
             <Link to={`/teacherDetails/${teacher.id}`}>
-                <Card expanded={expanded} onExpandChange={expanded => this.setState({ expanded })} style={{ width: itemWidth }}>
+                <Card expanded={expanded} 
+                    onExpandChange={expanded => this.setState({ expanded })} 
+                    style={{ width: itemWidth, display: 'inline-block', margin: '5px 5px' }}>
                     <CardHeader
                         title={teacherName}
                         subtitle={teacher.city_name}

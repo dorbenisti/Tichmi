@@ -25,12 +25,15 @@ class Teachers extends Component {
             )
         } else {
             return (
-                <div>
-                    {/* <GridList> */}
+                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+                    { this.props.teachers.map(teacher => (
+                        <Teacher key={teacher.id} teacher={teacher} />
+                     ))}
+                    {/* <GridList>
                     {this.props.teachers.map(teacher => (
                         <GridTile key={teacher.id}><Teacher teacher={teacher} /></GridTile>
                     ))}
-                    {/* </GridList> */}
+                    </GridList> */}
                 </div>
             )
         }
