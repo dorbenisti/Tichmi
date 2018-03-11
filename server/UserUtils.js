@@ -10,16 +10,30 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
         const { id, is_teacher } = userRow;
 
         let queries = [
-            `SELECT * FROM ${is_teacher ? 'teacher' : 'student'} WHERE id=?`
+            `SELECT * 
+            FROM ${is_teacher ? 'teacher' : 'student'} 
+            WHERE id=?`
         ];
 
         let params = [id];
 
         if (is_teacher) {
-            queries.push('SELECT s.id as id, s.display_name as `name` ' +
-            'FROM teacher_to_subject m2m, subject s ' +
-            'WHERE m2m.subject_id = s.id AND m2m.teacher_id=?');
-            params.push(id);
+            queries.push(`
+                SELECT s.id as id, s.display_name as \`name\`
+                FROM teacher_to_subject m2m, subject s
+                WHERE m2m.subject_id = s.id AND m2m.teacher_id=?`, 
+                `
+                (SELECT s.avgRating
+                FROM (SELECT teacher_id id, avg(rating) avgRating
+                      FROM review
+                      GROUP BY teacher_id) s
+                WHERE id=?)
+                UNION
+                (select null as avgRating)
+                LIMIT 1
+                `);
+ 
+            params.push(id, id);
         }
 
         connection.query(queries.join(';'), params, function (err, results) {
@@ -35,7 +49,7 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
             let extra = {};
 
             if (is_teacher) {
-                extra = { subjects: results[1] };
+                extra = { subjects: results[1], avgRating: results[2][0].avgRating };
             }
 
             callback({ ...userRow, ...specializedUserDetails, ...extra });

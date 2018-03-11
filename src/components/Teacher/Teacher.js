@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styles from './style.css';
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import { List, ListItem } from 'material-ui/List';
 import HouseIcon from "material-ui/svg-icons/social/location-city";
 import MoneyIcon from "material-ui/svg-icons/editor/attach-money";
@@ -27,7 +27,6 @@ class Teacher extends Component {
             <CardTitle title={teacherName} subtitle={teacher.city_name} />
         );
 
-        const itemWidth = '500px';
         const subjectsString = (teacher.subjects.map(s => s.name)).join();
 
         return (
