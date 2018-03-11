@@ -29,11 +29,6 @@ class Teachers extends Component {
                     { this.props.teachers.map(teacher => (
                         <Teacher key={teacher.id} teacher={teacher} />
                      ))}
-                    {/* <GridList>
-                    {this.props.teachers.map(teacher => (
-                        <GridTile key={teacher.id}><Teacher teacher={teacher} /></GridTile>
-                    ))}
-                    </GridList> */}
                 </div>
             )
         }

@@ -1,0 +1,12 @@
+.card {
+    width: 500px;
+    display: inline-block;
+    margin: 5px 5px
+}
+
+.card-media {
+    width: 500px !important;
+    height: 100%;
+    object-fit: contain;
+    min-width: unset !important;
+}

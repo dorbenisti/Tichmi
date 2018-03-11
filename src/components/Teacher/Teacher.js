@@ -34,7 +34,7 @@ class Teacher extends Component {
             <Link to={`/teacherDetails/${teacher.id}`}>
                 <Card expanded={expanded} 
                     onExpandChange={expanded => this.setState({ expanded })} 
-                    style={{ width: itemWidth, display: 'inline-block', margin: '5px 5px' }}>
+                    className={styles.card}>
                     <CardHeader
                         title={teacherName}
                         subtitle={teacher.city_name}
@@ -45,7 +45,7 @@ class Teacher extends Component {
                         overlay={overlay}>
                         <img src={teacher.image_url} 
                              alt={teacherName} 
-                             style={{ width: itemWidth, height: '100%', objectFit: 'contain', minWidth: 'unset' }} />
+                             className={styles['card-media']} />
                     </CardMedia>
                     <CardText expandable={true}>
                         <List>
