@@ -1,5 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy;
 const { sha512 } = require('js-sha512');
+const shortid = require('shortid');
 
 const connection = require('./createDbConnection')();
 const { getUser } = require('./UserUtils');
@@ -105,14 +106,19 @@ function register(req, email, password, done) {
 
         let subInsertQueries = [], secondInsertQueriesParams;
         if (is_teacher) {
-            const { phone, price, subjects } = req.body;
-            subInsertQueries.push("INSERT INTO teacher (id, phone, price) values (?,?,?)");
-            secondInsertQueriesParams = [rows.insertId, phone, price];
+
+            const filename = `/images/${shortid.generate()}`;
+
+            const { phone, price, subjects, image } = req.body;
+            subInsertQueries.push("INSERT INTO teacher (id, phone, price, image_url) values (?,?,?,?)");
+            secondInsertQueriesParams = [rows.insertId, phone, price, filename];
 
             for (let subject of subjects) {
                 subInsertQueries.push("INSERT INTO teacher_to_subject (teacher_id, subject_id) values (?,?)");
                 secondInsertQueriesParams.push(rows.insertId, subject.id);
             }
+
+            writeImageToFolder(image, filename);
         } else {
             const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
             subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
@@ -129,4 +135,9 @@ function register(req, email, password, done) {
             return done(null, userWithoutPassword);
         });
     });
+}
+
+function writeImageToFolder(file, filename) {
+    // TODO: do stuff
+    // http://www.hartzis.me/react-image-upload/
 }

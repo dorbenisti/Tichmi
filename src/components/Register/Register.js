@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -12,7 +11,7 @@ import Toggle from 'material-ui/Toggle';
 
 import CitySelect from "../common-components/city-select/CitySelect";
 import SubjectSelect from "../common-components/subject-select/SubjectSelect";
-import StarsRating from "../common-components/stars-rating/StarsRating";
+import ImageUpload from "./ImageUpload";
 
 import { RegistrationActions } from "../../actions";
 import { handleInputChange } from "common"
@@ -123,6 +122,7 @@ class Register extends Component {
                 <div>
                     <SubjectSelect onChange={subject => this.setValue('subjects', subject)} value={state.subjects.map(s => s.id)} />
                 </div>
+                <ImageUpload style={{ marginTop: '5px' }} onChange={file => this.setValue('image', file)}/>
             </React.Fragment>
         );
     }
