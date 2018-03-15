@@ -1,6 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const { sha512 } = require('js-sha512');
 const shortid = require('shortid');
+const fs = require('fs');
 
 const connection = require('./createDbConnection')();
 const { getUser } = require('./UserUtils');
@@ -109,7 +110,7 @@ function register(req, email, password, done) {
 
             const filename = `/images/${shortid.generate()}`;
 
-            const { phone, price, subjects, image } = req.body;
+            const { phone, price, subjects } = req.body;
             subInsertQueries.push("INSERT INTO teacher (id, phone, price, image_url) values (?,?,?,?)");
             secondInsertQueriesParams = [rows.insertId, phone, price, filename];
 
@@ -118,7 +119,7 @@ function register(req, email, password, done) {
                 secondInsertQueriesParams.push(rows.insertId, subject.id);
             }
 
-            writeImageToFolder(image, filename);
+            writeImageToFolder(req.files, filename);
         } else {
             const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
             subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
@@ -137,7 +138,33 @@ function register(req, email, password, done) {
     });
 }
 
+/*
+
+let multiparty = require('multiparty');
+
+function saveImage(req, res) {
+  let form = new multiparty.Form();
+
+  form.parse(req, (err, fields, files) => {
+
+    let {path: tempPath, originalFilename} = files.imageFile[0];
+    let copyToPath = "./images/" + originalFilename;
+  
+    fs.readFile(tempPath, (err, data) => {
+      // make copy of image to new location
+      fs.writeFile(newPath, data, (err) => {
+        // delete temp image
+        fs.unlink(tmpPath, () => {
+          res.send("File uploaded to: " + newPath);
+        });
+      }); 
+    }); 
+  })
+}
+*/
+/*
+Map current git images folder to another url ('old-images'), make a not git public/images folder and write uploaded shit there.
+*/
 function writeImageToFolder(file, filename) {
-    // TODO: do stuff
-    // http://www.hartzis.me/react-image-upload/
+    console.log('write image', file, filename);
 }

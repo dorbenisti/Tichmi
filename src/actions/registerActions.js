@@ -22,7 +22,11 @@ const register = (event, userDetails) => {
 
         dispatch(registrationCalled());
 
-        axios.post('/api/register', userDetails)
+        axios.post('/api/register', getFormData(userDetails), {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        })
             .then(res => {
                 dispatch(registrationSuccess())
 
@@ -40,3 +44,8 @@ export const RegistrationActions = {
     register
 };
 
+function getFormData(object) {
+    const formData = new FormData();
+    Object.keys(object).forEach(key => formData.append(key, object[key]));
+    return formData;
+}
