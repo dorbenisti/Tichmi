@@ -20,7 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
-app.use('/images', express.static(path.resolve(__dirname, '..', 'src', 'images')))
+app.use('/images', express.static(path.resolve(__dirname, '..', 'public', 'images')))
+app.use('/old-images', express.static(path.resolve(__dirname, '..', 'src', 'images')))
 // passport
 app.use(cookieParser());
 app.use(session({ secret: '677E36AE-E30C-411B-8B36-1152E6B45648' }));

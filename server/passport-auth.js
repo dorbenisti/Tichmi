@@ -2,11 +2,11 @@ const LocalStrategy = require('passport-local').Strategy;
 const { sha512 } = require('js-sha512');
 const shortid = require('shortid');
 const fs = require('fs');
+const path = require("path");
 
 const connection = require('./createDbConnection')();
 const { getUser } = require('./UserUtils');
 
-// expose this function to our app using module.exports
 module.exports = passport => {
 
     // =========================================================================
@@ -108,18 +108,17 @@ function register(req, email, password, done) {
         let subInsertQueries = [], secondInsertQueriesParams;
         if (is_teacher) {
 
-            const filename = `/images/${shortid.generate()}`;
-
+            const fileName = `${shortid.generate()}.jpg`;
             const { phone, price, subjects } = req.body;
             subInsertQueries.push("INSERT INTO teacher (id, phone, price, image_url) values (?,?,?,?)");
-            secondInsertQueriesParams = [rows.insertId, phone, price, filename];
+            secondInsertQueriesParams = [rows.insertId, phone, price, `/images/${fileName}`];
 
-            for (let subject of subjects) {
+            for (let subject of JSON.parse(subjects)) {
                 subInsertQueries.push("INSERT INTO teacher_to_subject (teacher_id, subject_id) values (?,?)");
                 secondInsertQueriesParams.push(rows.insertId, subject.id);
             }
 
-            writeImageToFolder(req.files, filename);
+            writeImageToFolder(req.files, fileName);
         } else {
             const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
             subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
@@ -138,33 +137,14 @@ function register(req, email, password, done) {
     });
 }
 
-/*
-
-let multiparty = require('multiparty');
-
-function saveImage(req, res) {
-  let form = new multiparty.Form();
-
-  form.parse(req, (err, fields, files) => {
-
-    let {path: tempPath, originalFilename} = files.imageFile[0];
-    let copyToPath = "./images/" + originalFilename;
-  
-    fs.readFile(tempPath, (err, data) => {
-      // make copy of image to new location
-      fs.writeFile(newPath, data, (err) => {
-        // delete temp image
-        fs.unlink(tmpPath, () => {
-          res.send("File uploaded to: " + newPath);
-        });
-      }); 
-    }); 
-  })
-}
-*/
-/*
-Map current git images folder to another url ('old-images'), make a not git public/images folder and write uploaded shit there.
-*/
 function writeImageToFolder(file, filename) {
-    console.log('write image', file, filename);
+    const dir = path.resolve(__dirname, '..', 'public', 'images');
+
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+
+    const filePath = path.resolve(dir, filename);
+
+    fs.writeFileSync(filePath, file.image.data);
 }

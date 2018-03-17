@@ -46,6 +46,16 @@ export const RegistrationActions = {
 
 function getFormData(object) {
     const formData = new FormData();
-    Object.keys(object).forEach(key => formData.append(key, object[key]));
+
+    Object.keys(object).forEach(key => {
+        const data = object[key];
+
+        if (typeof data === 'object' && !(data instanceof File)) {
+            formData.append(key, JSON.stringify(data))
+        } else {
+            formData.append(key, data)
+        }
+    });
+
     return formData;
 }
