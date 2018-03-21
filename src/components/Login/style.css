@@ -1,9 +1,33 @@
-.bla {
-    color: red;
+.login_page{
+    min-height: 100%;
+    width: 100%;
 }
 
-.bla2 {
-    text-decoration: underline;
+.login_page:after{
+    opacity: 0.6;
+    background-image: url('../../images/login_page.jpg');
+    /* position: absolute; */
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+    height: auto;
+    width: 100%;
+    background-size: cover;
+}
+
+.logo{
+    border-radius: 10px;
+    width: 140px;
+}
+
+.title{
+    margin-bottom: 0px;
+    margin-top: 2px;
+    color: lightseagreen;
 }
 
 body{
@@ -12,4 +36,12 @@ body{
 
 .form{
     text-align: center;
+    width: max-content;
+    margin: auto;
+    padding: 10px;
+    /*background-color: #e9e7e7d4;*/
+    background-color: #ffffffbf;
+    border-radius: 20px;
+    margin-top: 80px;
+    box-shadow: 13px 15px 20px 0px rgba(0, 0, 0, 0.19);
 }

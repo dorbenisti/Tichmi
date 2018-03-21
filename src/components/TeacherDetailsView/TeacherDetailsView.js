@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Teacher from "../Teacher/Teacher";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { connect } from "react-redux";
 import axios from "axios";
 

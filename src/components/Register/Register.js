@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -12,7 +10,6 @@ import Toggle from 'material-ui/Toggle';
 
 import CitySelect from "../common-components/city-select/CitySelect";
 import SubjectSelect from "../common-components/subject-select/SubjectSelect";
-import StarsRating from "../common-components/stars-rating/StarsRating";
 
 import { RegistrationActions } from "../../actions";
 import { handleInputChange } from "common"
@@ -50,18 +47,21 @@ class Register extends Component {
         const { is_teacher } = state;
 
         return (
-            <MuiThemeProvider>
+            <div className={styles.register_page}>
                 <form className={styles.form} onSubmit={event => this.props.registerActions.register(event, this.state)}>
-                    <h2>הרשמה</h2>
-                    <div>
+                    <h1 className={styles.title}>הרשמה</h1>
+                    <div className={styles.center}>
                         <CustomToggle label="מורה?" value={!!state.is_teacher} fieldName="is_teacher" setValue={this.setValue} />
                     </div>
                     {this.renderGeneralUserForm()}
                     {is_teacher && this.renderTeacherForm()}
                     {!is_teacher && this.renderStudentForm()}
-                    <RaisedButton type="submit" primary={true}>הירשם</RaisedButton>
+                    <br/>
+                    <div className={styles.center}>
+                        <RaisedButton type="submit" primary={true}>הירשם</RaisedButton>
+                    </div>
                 </form>
-            </MuiThemeProvider>
+            </div>
         );
     }
 
@@ -78,14 +78,7 @@ class Register extends Component {
         return (
             <React.Fragment>
                 {/* <StarsRating rating={3} disabled={false} onChange={() => {}} /> */}
-                <div>
-                    <TextField type="email" name="email" floatingLabelText="אימייל" value={state.email} onChange={handleInputChange} required />
-                </div>
-                <div>
-                    <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={state.password} onChange={handleInputChange} required />
-                </div>
-              
-                <div>
+                <div className={styles.center}>
                     <SelectField
                         floatingLabelText="מין"
                         value={state.gender}
@@ -95,13 +88,19 @@ class Register extends Component {
                         <MenuItem value={1} primaryText="Female" />
                     </SelectField>
                 </div>
-                <div>
+                <div className={styles.col}>
+                    <TextField type="email" name="email" floatingLabelText="אימייל" value={state.email} onChange={handleInputChange} required />
+                </div>
+                <div className={styles.col}>
+                    <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={state.password} onChange={handleInputChange} required />
+                </div>
+                <div className={styles.col}>
                     <TextField name="first_name" floatingLabelText="שם פרטי" value={state.first_name} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.col}>
                     <TextField name="last_name" floatingLabelText="שם משפחה" value={state.last_name} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.col}>
                     <CitySelect onChange={city => this.setValue('city_id', city.id)} value={state.city_id} />
                 </div>
             </React.Fragment>
@@ -114,13 +113,13 @@ class Register extends Component {
 
         return (
             <React.Fragment>
-                <div>
+                <div className={styles.col}>
                     <TextField name="phone" floatingLabelText="טלפון" value={state.phone} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.col}>
                     <TextField type="number" name="price" floatingLabelText="מחיר" value={state.price} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.col}>
                     <SubjectSelect onChange={subject => this.setValue('subjects', subject)} value={state.subjects.map(s => s.id)} />
                 </div>
             </React.Fragment>
@@ -133,13 +132,13 @@ class Register extends Component {
 
         return (
             <React.Fragment>
-                <div>
+                <div className={styles.col}>
                     <TextField type="number" name="min_price" floatingLabelText="מחיר מינימלי" value={state.min_price} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.col}>
                     <TextField type="number" name="max_price" floatingLabelText="מחיר מקסימלי" value={state.max_price} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.col}>
                     <TextField type="number" name="max_km_distance" floatingLabelText="מרחק מקסימלי בקילומטרים" value={state.max_km_distance} onChange={handleInputChange} required />
                 </div>
                 <div>

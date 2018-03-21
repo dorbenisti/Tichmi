@@ -33,8 +33,8 @@ const login = (event, userDetails) => {
             .then(res => {
                     axios.get('/api/user').then(res => {
                         dispatch(loginSuccess(res.data));
+                        dispatch(push('/'));
                     });
-                    dispatch(push('/'));
                 })
             .catch(err => dispatch(loginFailure(err)));
     };

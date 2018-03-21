@@ -1,3 +1,50 @@
+.register_page{
+    min-height: 100%;
+    width: 100%;
+}
+
+.register_page:after{
+    opacity: 0.6;
+    background-image: url('../../images/login_page.jpg');
+    /* position: absolute; */
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+    height: auto;
+    width: 100%;
+    background-size: cover;
+}
+
+.title {
+    display: table;
+    margin: 5px auto 30px auto;
+    color: lightseagreen;
+}
+
 .form {
-    margin-right: 50px;
+    display: table;
+    width: max-content;
+    margin: auto;
+    padding: 10px;
+    background-color: #ffffffbf;
+    border-radius: 20px;
+    margin-top: 80px;
+    box-shadow: 13px 15px 20px 0px rgba(0, 0, 0, 0.19);
+}
+
+.col {
+    float: right;
+}
+
+.col:nth-child(2n+2){
+    clear: right;
+}
+
+.center {
+    display: table;
+    margin:auto;
 }

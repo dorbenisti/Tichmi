@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { LoginActions } from "../../actions";
 import { handleInputChange } from "common"
+import { Link } from 'react-router-dom';
+import logo from "../../images/Tichmi_logo.png";
 
 import styles from './style.css';
 
@@ -24,18 +24,24 @@ class Login extends Component {
 
     render() {
         return (
-            <MuiThemeProvider>
+            <div className={styles.login_page}>
                 <form className={styles.form} onSubmit={event => this.props.loginActions.login(event, this.state)}>
-                    <h2>התחברות</h2>
+                    <img src={logo} className={styles.logo}/>
+                    <h1 className={styles.title}>התחברות</h1>
                     <div>
                         <TextField type="email" name="email" floatingLabelText="אימייל" value={this.state.email} onChange={ this.handleInputChange } required />
+                        {/*floatingLabelStyle={{color: 'rgb(0,188,212)'}}*/}
                     </div>
                     <div>
                         <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={this.state.password} onChange={ this.handleInputChange } required />
                     </div>
                     <RaisedButton type="submit" primary={true}>התחבר</RaisedButton>
+                    <br/>
+                    <br/>
+                    <span>עדיין לא רשום??? </span>
+                    <Link to='/register'><span>לחץ כאן</span></Link>
                 </form>
-            </MuiThemeProvider>
+            </div>
         );
     }
 }
