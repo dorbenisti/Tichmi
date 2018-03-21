@@ -19,7 +19,7 @@ class Teacher extends Component {
     }
 
     render() {
-        const { teacher } = this.props;
+        const { teacher, match } = this.props;
         const { expanded } = this.state;
 
         const teacherName = `${teacher.first_name} ${teacher.last_name}`;
@@ -31,7 +31,7 @@ class Teacher extends Component {
         const subjectsString = (teacher.subjects.map(s => s.name)).join();
 
         return (
-            <Link to={`/teacherDetails/${teacher.id}`}>
+            <Link to={`${match.path}teacherDetails/${teacher.id}`}>
                 <Card expanded={expanded}
                     onExpandChange={expanded => this.setState({ expanded })}
                     className={styles.card}>
