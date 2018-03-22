@@ -6,6 +6,7 @@ import HouseIcon from "material-ui/svg-icons/social/location-city";
 import MoneyIcon from "material-ui/svg-icons/editor/attach-money";
 import SubjectIcon from "material-ui/svg-icons/action/subject";
 import { Link } from 'react-router-dom';
+import StarsRating from "../common-components/stars-rating/StarsRating";
 
 class Teacher extends Component {
 
@@ -18,7 +19,7 @@ class Teacher extends Component {
     }
 
     render() {
-        const { teacher } = this.props;
+        const { teacher, match } = this.props;
         const { expanded } = this.state;
 
         const teacherName = `${teacher.first_name} ${teacher.last_name}`;
@@ -30,9 +31,9 @@ class Teacher extends Component {
         const subjectsString = (teacher.subjects.map(s => s.name)).join();
 
         return (
-            <Link to={`/teacherDetails/${teacher.id}`}>
-                <Card expanded={expanded} 
-                    onExpandChange={expanded => this.setState({ expanded })} 
+            <Link to={`${match.path}teacherDetails/${teacher.id}`}>
+                <Card expanded={expanded}
+                    onExpandChange={expanded => this.setState({ expanded })}
                     className={styles.card}>
                     <CardHeader
                         title={teacherName}
@@ -42,15 +43,17 @@ class Teacher extends Component {
                         showExpandableButton={true} />
                     <CardMedia
                         overlay={overlay}>
-                        <img src={teacher.image_url} 
-                             alt={teacherName} 
-                             className={styles['card-media']} />
+                        <img src={teacher.image_url}
+                            alt={teacherName}
+                            className={styles['card-media']} />
                     </CardMedia>
                     <CardText expandable={true}>
                         <List>
                             <ListItem primaryText={teacher.city_name} leftIcon={<HouseIcon />} />
                             <ListItem primaryText={`₪${teacher.price}`} leftIcon={<MoneyIcon />} />
-                            <ListItem primaryText={subjectsString} leftIcon={<SubjectIcon />} />                            
+                            <ListItem primaryText={subjectsString} leftIcon={<SubjectIcon />} />
+                            {teacher.avgRating !== null && <StarsRating rating={teacher.avgRating} disabled={true} />}
+                            {teacher.avgRating === null && <div>No rating to show...</div>}
                         </List>
                     </CardText>
                 </Card>

@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 
 const app = express();
 
@@ -19,12 +20,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
-app.use('/images', express.static(path.resolve(__dirname, '..', 'src', 'images')))
+app.use('/images', express.static(path.resolve(__dirname, '..', 'public', 'images')))
+app.use('/old-images', express.static(path.resolve(__dirname, '..', 'src', 'images')))
 // passport
 app.use(cookieParser());
 app.use(session({ secret: '677E36AE-E30C-411B-8B36-1152E6B45648' }));
 app.use(passport.initialize());
 app.use(passport.session());
+// file upload
+app.use(fileUpload());
 // Serve our api
 app.use('/api', require('./api'))
 

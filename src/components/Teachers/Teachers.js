@@ -15,6 +15,8 @@ class Teachers extends Component {
     }
 
     render() {
+        const { match } = this.props;
+
         if (this.props.error) {
             return (
                 <h1>Error occured: {this.props.error}</h1>
@@ -27,7 +29,7 @@ class Teachers extends Component {
             return (
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
                     { this.props.teachers.map(teacher => (
-                        <Teacher key={teacher.id} teacher={teacher} />
+                        <Teacher key={teacher.id} teacher={teacher} match={match} />
                      ))}
                 </div>
             )

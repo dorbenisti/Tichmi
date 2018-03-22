@@ -48,3 +48,7 @@
     display: table;
     margin:auto;
 }
+
+.last {
+    display: table-row;
+}

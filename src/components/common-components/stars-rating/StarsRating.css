@@ -5,3 +5,7 @@
 .custom-stars-rating > span > span > span {
     width: 30px !important;
 }
+
+.custom-stars-rating.disabled label:hover {
+    cursor: not-allowed;
+}

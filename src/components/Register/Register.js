@@ -10,6 +10,7 @@ import Toggle from 'material-ui/Toggle';
 
 import CitySelect from "../common-components/city-select/CitySelect";
 import SubjectSelect from "../common-components/subject-select/SubjectSelect";
+import ImageUpload from "./ImageUpload";
 
 import { RegistrationActions } from "../../actions";
 import { handleInputChange } from "common"
@@ -77,7 +78,6 @@ class Register extends Component {
 
         return (
             <React.Fragment>
-                {/* <StarsRating rating={3} disabled={false} onChange={() => {}} /> */}
                 <div className={styles.center}>
                     <SelectField
                         floatingLabelText="מין"
@@ -122,6 +122,9 @@ class Register extends Component {
                 <div className={styles.col}>
                     <SubjectSelect onChange={subject => this.setValue('subjects', subject)} value={state.subjects.map(s => s.id)} />
                 </div>
+                <div className={styles.last}>
+                    <ImageUpload style={{ marginTop: '5px' }} onChange={file => this.setValue('image', file)}/>
+                </div>
             </React.Fragment>
         );
     }
@@ -141,7 +144,7 @@ class Register extends Component {
                 <div className={styles.col}>
                     <TextField type="number" name="max_km_distance" floatingLabelText="מרחק מקסימלי בקילומטרים" value={state.max_km_distance} onChange={handleInputChange} required />
                 </div>
-                <div>
+                <div className={styles.last}>
                     <CustomToggle label="מעוניין בשיעורים קבוצתיים?" value={!!state.want_group_lesson} fieldName="want_group_lesson" setValue={this.setValue} />
                 </div>
             </React.Fragment>

@@ -177,7 +177,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES (2,'054-5879865',50,'/images/dani.jpg'),(21,'78',90,'/images/dani.jpg'),(22,'78',90,'/images/dani.jpg'),(23,'23',90,'/images/dani.jpg'),(24,'78',90,'/images/dani.jpg'),(25,'78',90,'/images/dani.jpg'),(26,'78',90,'/images/dani.jpg');
+INSERT INTO `teacher` VALUES (2,'054-5879865',50,'/old-images/dani.jpg'),(21,'78',90,'/old-images/dani.jpg'),(22,'78',90,'/old-images/dani.jpg'),(23,'23',90,'/old-images/dani.jpg'),(24,'78',90,'/old-images/dani.jpg'),(25,'78',90,'/old-images/dani.jpg'),(26,'78',90,'/old-images/dani.jpg');
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 
