@@ -98,15 +98,17 @@ function register(req, email, password, done) {
 
     const { first_name, last_name, is_teacher, gender, city_id } = req.body;
 
+    const isTeacherAsNumber = boolStringToDbBoolNumber(is_teacher);
+
     const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id ) values (?,?,?,?,?,?,?)";
-    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, is_teacher, city_id], function (err, rows) {
+    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, isTeacherAsNumber, city_id], function (err, rows) {
 
         if (err) {
             return done(err);
         }
 
         let subInsertQueries = [], secondInsertQueriesParams;
-        if (is_teacher) {
+        if (isTeacherAsNumber) {
 
             const fileName = `${shortid.generate()}.jpg`;
             const { phone, price, subjects } = req.body;
@@ -122,7 +124,7 @@ function register(req, email, password, done) {
         } else {
             const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
             subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
-            secondInsertQueriesParams = [rows.insertId, min_price, max_price, max_km_distance, want_group_lesson];
+            secondInsertQueriesParams = [rows.insertId, min_price, max_price, max_km_distance, boolStringToDbBoolNumber(want_group_lesson)];
         }
 
         connection.query(subInsertQueries.join(';'), secondInsertQueriesParams, (err) => {
@@ -135,6 +137,10 @@ function register(req, email, password, done) {
             return done(null, userWithoutPassword);
         });
     });
+}
+
+function boolStringToDbBoolNumber(value) {
+    return value === "true" ? 1 : 0;
 }
 
 function writeImageToFolder(file, filename) {

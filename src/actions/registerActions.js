@@ -32,9 +32,8 @@ const register = (event, userDetails) => {
 
                 axios.get('/api/user').then(res => {
                     dispatch(LoginActions.loginSuccess(res.data));
+                    dispatch(push('/'));
                 });
-
-                dispatch(push('/'));
             })
             .catch(err => dispatch(registrationFailure(err)));
     };

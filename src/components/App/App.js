@@ -15,64 +15,55 @@ import logo from "../../images/Tichmi_logo.png";
 import styles from './style.css';
 
 class App extends Component {
+    render() {
 
-  render() {
+        const { match, user } = this.props;
+        const loggedIn = user;
 
-      const { match } = this.props;
-      const loggedIn = !!this.props.user;
+        const barContent = (
+            <div className={styles.barContent}>
+                <Link to={`${match.path}/`}><img src={logo} className={styles.logo} /></Link>
+                <SearchBox />
+            </div>
+        );
 
-      const barContent = (
-          <div className={styles.barContent}>
-              <Link to={`${match.path}/`}><img src={logo} className={styles.logo}/></Link>
-              <SearchBox />
-          </div>
-      );
+        let rightButtons;
 
-      let rightButtons;
+        if (user) {
+            rightButtons = (
+                <div className={styles.rightButtons}>
+                    <span>ברוך הבא {user}</span>
+                    <RaisedButton className={styles.link} onClick={this.props.actions.logout} label="התנתק" />
+                </div>
+            );
+        }
 
-      if (this.props.user) {
-          rightButtons = (
-              <div className={styles.rightButtons}>
-                  <span>ברוך הבא {this.props.user}</span>
-                  <RaisedButton className={styles.link} onClick={this.props.actions.logout} label="התנתק" />
-              </div>
-          );
-      }
-      // else {
-      //     rightButtons = (
-      //         <div className={styles.rightButtons}>
-      //             <Link to={`${match.path}register/`} className={styles.link}><RaisedButton label="הירשם" /></Link>
-      //             <Link to={`${match.path}login/`} className={styles.link}><RaisedButton label="התחבר" /></Link>
-      //         </div>
-      //     );
-      // }
+        return (
+            <div>
+                <Switch>
+                    <Route exact path={match.path} render={props => (
+                        !loggedIn ? (
+                            <Redirect to={`${match.path}login/`} />
+                        ) : (
+                                <React.Fragment>
+                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
+                                    <Teachers {...props} />
+                                </React.Fragment>
+                            )
+                    )} />
+                    <Route exact path={`${match.path}register/`} component={Register} />
+                    <Route exact path={`${match.path}login/`} component={Login} />
+                    <Route exact path={`${match.path}teacherDetails/:id/`} render={props => (
+                        <React.Fragment>
+                            <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
+                            <TeacherDetailsView {...props} />
+                        </React.Fragment>
+                    )} />
+                </Switch>
 
-      return (
-          <div>
-              <Switch>
-                  <Route exact path={match.path} render={props => (
-                      !loggedIn ? (
-                          <Redirect to={`${match.path}login/`}/>
-                      ) : (
-                          <React.Fragment>
-                              <AppBar iconElementLeft={barContent} iconElementRight={rightButtons}/>
-                              <Teachers {...props}/>
-                          </React.Fragment>
-                      )
-                  )} />
-                  <Route exact path={`${match.path}register/`} component={Register} />
-                  <Route exact path={`${match.path}login/`} component={Login} />
-                  <Route exact path={`${match.path}teacherDetails/:id/`} render={props => (
-                      <React.Fragment>
-                          <AppBar iconElementLeft={barContent} iconElementRight={rightButtons}/>
-                          <TeacherDetailsView {...props} />
-                      </React.Fragment>
-                  )} />
-              </Switch>
-
-          </div>
-      );
-  }
+            </div>
+        );
+    }
 }
 
 function mapStateToProps(state) {
