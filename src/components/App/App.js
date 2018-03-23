@@ -51,7 +51,7 @@ class App extends Component {
           <div>
               <Switch>
                   <Route exact path={match.path} render={props => (
-                      loggedIn ? (
+                      !loggedIn ? (
                           <Redirect to={`${match.path}login/`}/>
                       ) : (
                           <React.Fragment>
