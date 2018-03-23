@@ -30,11 +30,13 @@ class Login extends Component {
                     <h1 className={styles.title}>התחברות</h1>
                     <div>
                         <TextField type="email" name="email" floatingLabelText="אימייל" value={this.state.email} onChange={ this.handleInputChange } required />
-                        {/*floatingLabelStyle={{color: 'rgb(0,188,212)'}}*/}
                     </div>
                     <div>
                         <TextField type="password" name="password" floatingLabelText="סיסמא" minLength="8" value={this.state.password} onChange={ this.handleInputChange } required />
                     </div>
+                    {
+                        this.props.loginError ? <span className={styles.login_error}>האימייל או הסיסמא אינם נכונים. נסו שוב בבקשה.</span> : null
+                    }
                     <RaisedButton type="submit" primary={true}>התחבר</RaisedButton>
                     <br/>
                     <br/>
@@ -47,7 +49,9 @@ class Login extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        loginError: state.login.error
+    };
 }
 
 function mapDispatchToProps(dispatch) {

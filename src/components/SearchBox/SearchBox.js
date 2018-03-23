@@ -7,11 +7,11 @@ class SearchBox extends Component {
 
     render(){
         return <div className={styles.Finder}>
-            <h2>מצא את המורה שלך:</h2>
-            <TextField
-                hintText="תחום עיסוק"
-            />
+            <h1>מאגר המורים הגדול בישראל!</h1>
+            <h2>מורים ומרצים מנוסים לכל המקצועות בכל הארץ</h2>
+            <TextField hintText="מה בא לך ללמוד?" />
             <RaisedButton label="חפש" secondary={true} className={styles.button}/>
+            <RaisedButton label="חיפוש מתקדם" secondary={true} className={styles.button}/>
         </div>;
     }
 }

@@ -45,3 +45,9 @@ body{
     margin-top: 80px;
     box-shadow: 13px 15px 20px 0px rgba(0, 0, 0, 0.19);
 }
+
+.login_error {
+    color: red;
+    display: block;
+    margin-bottom: 8px;
+}
