@@ -120,5 +120,8 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "nodemonConfig": {
+    "ignore": ["src/*"]
   }
 }
