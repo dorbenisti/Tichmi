@@ -54,7 +54,7 @@ class Login extends Component {
                     <RaisedButton type="submit" primary={true}>התחבר</RaisedButton>
                     <br/>
                     <br/>
-                    <span>עדיין לא רשום??? </span>
+                    <span style={{color: 'black'}}>עדיין לא רשום??? </span>
                     <Link to='/register'><span>לחץ כאן</span></Link>
                 </form>
             </div>

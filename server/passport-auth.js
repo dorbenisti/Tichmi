@@ -96,12 +96,12 @@ module.exports = passport => {
 function register(req, email, password, done) {
     const passwordHash = sha512(password);
 
-    const { first_name, last_name, is_teacher, gender, city_id } = req.body;
+    const { first_name, last_name, is_teacher, gender, city_id, group_lesson } = req.body;
 
     const isTeacherAsNumber = boolStringToDbBoolNumber(is_teacher);
 
-    const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id ) values (?,?,?,?,?,?,?)";
-    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, isTeacherAsNumber, city_id], function (err, rows) {
+    const insertQuery = "INSERT INTO user ( email, password, first_name, last_name, gender, is_teacher, city_id, group_lesson ) values (?,?,?,?,?,?,?,?)";
+    connection.query(insertQuery, [email, passwordHash, first_name, last_name, gender, isTeacherAsNumber, city_id, boolStringToDbBoolNumber(group_lesson)], function (err, rows) {
 
         if (err) {
             return done(err);
@@ -122,9 +122,9 @@ function register(req, email, password, done) {
 
             writeImageToFolder(req.files, fileName);
         } else {
-            const { min_price, max_price, max_km_distance, want_group_lesson } = req.body;
-            subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance, want_group_lesson) values (?,?,?,?,?)");
-            secondInsertQueriesParams = [rows.insertId, min_price, max_price, max_km_distance, boolStringToDbBoolNumber(want_group_lesson)];
+            const { min_price, max_price, max_km_distance } = req.body;
+            subInsertQueries.push("INSERT INTO student (id, min_price, max_price, max_km_distance) values (?,?,?,?)");
+            secondInsertQueriesParams = [rows.insertId, min_price, max_price, max_km_distance];
         }
 
         connection.query(subInsertQueries.join(';'), secondInsertQueriesParams, (err) => {

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.17, for macos10.12 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: tichmi
 -- ------------------------------------------------------
--- Server version	5.6.37
+-- Server version	5.7.20-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -113,7 +113,6 @@ CREATE TABLE `student` (
   `id` int(11) NOT NULL,
   `max_price` int(11) NOT NULL,
   `max_km_distance` int(11) NOT NULL,
-  `want_group_lesson` int(1) NOT NULL DEFAULT '0',
   `min_price` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   CONSTRAINT `student_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
@@ -126,6 +125,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
+INSERT INTO `student` VALUES (36,3434,343,3234),(37,0,0,0),(39,545,454,454),(40,54543,43531,3543);
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,7 +177,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES (2,'054-5879865',50,'/old-images/dani.jpg'),(21,'78',90,'/old-images/dani.jpg'),(22,'78',90,'/old-images/dani.jpg'),(23,'23',90,'/old-images/dani.jpg'),(24,'78',90,'/old-images/dani.jpg'),(25,'78',90,'/old-images/dani.jpg'),(26,'78',90,'/old-images/dani.jpg');
+INSERT INTO `teacher` VALUES (2,'054-5879865',50,'/old-images/dani.jpg'),(21,'78',90,'/old-images/dani.jpg'),(22,'78',90,'/old-images/dani.jpg'),(23,'23',90,'/old-images/dani.jpg'),(24,'78',90,'/old-images/dani.jpg'),(25,'78',90,'/old-images/dani.jpg'),(26,'78',90,'/old-images/dani.jpg'),(28,'asdasdasd',0,'/images/HybOxd9FG.jpg'),(29,'גדכדגכ4',4343,'/images/HkagwcG9z.jpg');
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,7 +204,7 @@ CREATE TABLE `teacher_to_subject` (
 
 LOCK TABLES `teacher_to_subject` WRITE;
 /*!40000 ALTER TABLE `teacher_to_subject` DISABLE KEYS */;
-INSERT INTO `teacher_to_subject` VALUES (2,2),(21,2),(2,4),(21,5),(21,6),(2,7);
+INSERT INTO `teacher_to_subject` VALUES (28,1),(29,1),(2,2),(21,2),(2,4),(21,5),(28,5),(29,5),(21,6),(28,6),(2,7);
 /*!40000 ALTER TABLE `teacher_to_subject` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -219,16 +219,17 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
   `password` varchar(200) NOT NULL,
-  `is_teacher` tinyint(1) NOT NULL DEFAULT '0',
+  `is_teacher` tinyint(1) NOT NULL,
   `gender` int(1) NOT NULL COMMENT '0=male\n1=female',
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `city_id` int(11) NOT NULL,
+  `group_lesson` int(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`email`),
   KEY `user_city_idx` (`city_id`),
   CONSTRAINT `user_city` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +238,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'a123@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'t','t',1),(2,'a1@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,1,'f','f',2),(21,'a@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'123','456',8),(22,'a2@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8),(23,'a3@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8),(24,'a4@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8),(25,'a5@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8),(26,'a6@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8);
+INSERT INTO `user` VALUES (1,'a123@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'t','t',1,0),(2,'a1@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,1,'f','f',2,0),(21,'a@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'123','456',8,0),(22,'a2@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8,0),(23,'a3@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8,0),(24,'a4@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8,0),(25,'a5@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8,0),(26,'a6@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'1234','4567',8,0),(28,'a23244@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'asdasd','asdasdasdasd',8,0),(29,'a1@b.c1','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',1,0,'12','34',8,0),(36,'a@b.c35326','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'adsad','asdsa',8,0),(37,'a365376548@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'sadas','sadasd',7,0),(38,'a42152345@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'sdfsdf','dsfds',1,0),(39,'a421545452345@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'sdfsdf','dsfds',1,0),(40,'435435345@b.c','fa585d89c851dd338a70dcf535aa2a92fee7836dd6aff1226583e88e0996293f16bc009c652826e0fc5c706695a03cddce372f139eff4d13959da6f1f5d3eabe',0,0,'asdasd','asdasd',8,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -250,4 +251,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-11 22:14:02
+-- Dump completed on 2018-03-24 18:49:37

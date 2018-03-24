@@ -34,7 +34,7 @@ class Register extends Component {
             min_price: 0,
             max_price: 0,
             max_km_distance: 0,
-            want_group_lesson: false,
+            group_lesson: false,
             subjects: []
         };
 
@@ -103,6 +103,9 @@ class Register extends Component {
                 <div className={styles.col}>
                     <CitySelect onChange={city => this.setValue('city_id', city.id)} value={state.city_id} />
                 </div>
+                <div className={styles.col}>
+                    <CustomToggle label={state.is_teacher ? "מדריך בקבוצות?" : "מעוניין בשיעורים קבוצתיים?"} value={!!state.group_lesson} fieldName="group_lesson" setValue={this.setValue} />
+                </div>
             </React.Fragment>
         );
     }
@@ -141,12 +144,10 @@ class Register extends Component {
                 <div className={styles.col}>
                     <TextField type="number" name="max_price" floatingLabelText="מחיר מקסימלי" value={state.max_price} onChange={handleInputChange} required />
                 </div>
-                <div className={styles.col}>
+                <div className={styles.last}>
                     <TextField type="number" name="max_km_distance" floatingLabelText="מרחק מקסימלי בקילומטרים" value={state.max_km_distance} onChange={handleInputChange} required />
                 </div>
-                <div className={styles.last}>
-                    <CustomToggle label="מעוניין בשיעורים קבוצתיים?" value={!!state.want_group_lesson} fieldName="want_group_lesson" setValue={this.setValue} />
-                </div>
+                
             </React.Fragment>
         );
     }

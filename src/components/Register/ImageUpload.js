@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import RaisedButton from 'material-ui/RaisedButton';
 
 export default class ImageUpload extends Component {
     constructor(props) {
@@ -42,8 +43,13 @@ export default class ImageUpload extends Component {
 
         return (
             <div style={style}>
-                <input type="file" onChange={this._handleImageChange} />
-                { imagePreviewUrl && <img src={imagePreviewUrl} alt="img" style={imgStyles} /> }
+                <RaisedButton
+                    label="בחר תמונה"
+                    labelPosition="before"
+                    containerElement="label">
+                    <input type="file" style={{ display: 'none' }} onChange={this._handleImageChange} />
+                </RaisedButton>
+                {imagePreviewUrl && <img src={imagePreviewUrl} alt="img" style={imgStyles} />}
             </div>
         );
     }
