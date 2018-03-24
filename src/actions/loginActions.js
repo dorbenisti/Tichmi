@@ -22,18 +22,18 @@ const logoutDone = () => {
     return { type: LOGOUT_DONE }
 };
 
-const login = (event, userDetails) => {
+const login = (event, {email, password, returnUrl}) => {
     event.preventDefault();
 
     return dispatch => {
 
         dispatch(loginCalled());
 
-        axios.post('/api/login', userDetails)
+        axios.post('/api/login', {email, password})
             .then(res => {
                     axios.get('/api/user').then(res => {
                         dispatch(loginSuccess(res.data));
-                        dispatch(push('/'));
+                        dispatch(push(returnUrl));
                     });
                 })
             .catch(err => dispatch(loginFailure(err)));

@@ -17,7 +17,7 @@ import styles from './style.css';
 class App extends Component {
     render() {
 
-        const { match, user } = this.props;
+        const { match, user, location } = this.props;
         const loggedIn = user;
 
         const barContent = (
@@ -27,7 +27,11 @@ class App extends Component {
             </div>
         );
 
-        let rightButtons;
+        let rightButtons = (
+            <div className={styles.rightButtons}>
+                <span>שלום אורח</span>
+            </div>
+        );
 
         if (user) {
             rightButtons = (
@@ -39,31 +43,34 @@ class App extends Component {
         }
 
         return (
-            <div>
-                <Switch>
-                    <Route exact path={match.path} render={props => (
-                        !loggedIn ? (
-                            <Redirect to={`${match.path}login/`} />
-                        ) : (
+            (!loggedIn && pathNeedsAuth(location.pathname)) ? (
+                <Redirect to={`${match.path}login/?originUrl=${location.pathname}`} />) : (
+                    <div style={{ height: '100vh' }}>
+                        <Switch>
+                            <Route exact path={match.path} render={props => (
                                 <React.Fragment>
                                     <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
                                     <Teachers {...props} />
                                 </React.Fragment>
-                            )
-                    )} />
-                    <Route exact path={`${match.path}register/`} component={Register} />
-                    <Route exact path={`${match.path}login/`} component={Login} />
-                    <Route exact path={`${match.path}teacherDetails/:id/`} render={props => (
-                        <React.Fragment>
-                            <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
-                            <TeacherDetailsView {...props} />
-                        </React.Fragment>
-                    )} />
-                </Switch>
 
-            </div>
-        );
+                            )} />
+                            <Route exact path={`${match.path}register/`} component={Register} />
+                            <Route exact path={`${match.path}login/`} component={Login} />
+                            <Route exact path={`${match.path}teacherDetails/:id/`} render={props => (
+                                <React.Fragment>
+                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
+                                    <TeacherDetailsView {...props} />
+                                </React.Fragment>
+                            )} />
+                        </Switch>
+
+                    </div>
+                ));
     }
+}
+
+function pathNeedsAuth(path) {
+    return (!path.includes('login') && !path.includes('register'));
 }
 
 function mapStateToProps(state) {

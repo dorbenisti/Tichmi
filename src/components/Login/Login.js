@@ -18,7 +18,8 @@ class Login extends Component {
 
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            returnUrl: props.location.search.split('=')[1]
         };
 
         this.handleInputChange = handleInputChange.bind(this);
@@ -32,7 +33,7 @@ class Login extends Component {
         axios.get('/api/user').then(res => {
             loginSuccess(res.data);
             push('/');
-        });
+        }, () => {});
     }
 
     render() {

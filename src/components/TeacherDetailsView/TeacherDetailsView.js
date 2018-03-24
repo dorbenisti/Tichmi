@@ -27,11 +27,27 @@ class TeacherDetailsView extends Component {
 
         if (!teacher) return (<div>Loading...</div>);
 
+
         return (
-            <div>
-                Teacher is {teacher.first_name} {teacher.last_name} from {teacher.city_name}
+            <div className={styles.container}>
+                <div className={styles.banner}>
+                    <img className={styles.image} src={teacher.image_url} />
+                    <div className={styles['general-details']}>
+                        <div className={styles.name}>{teacher.first_name} {teacher.last_name}</div>
+                        <div className={styles.city}>{teacher.city_name}</div>
+                    </div>
+                    <div className={styles.price}>
+                        {`₪${teacher.price}`}
+                    </div>
+                </div>
             </div>
         );
+
+        // return (
+        //     <div>
+        //         Teacher is {teacher.first_name} {teacher.last_name} from {teacher.city_name}
+        //     </div>
+        // );
     }
 }
 
