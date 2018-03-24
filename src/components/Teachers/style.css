@@ -1,0 +1,6 @@
+.teachers_view {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}

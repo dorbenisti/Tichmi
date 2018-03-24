@@ -27,7 +27,7 @@ class Teachers extends Component {
             )
         } else {
             return (
-                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+                <div className={styles.teachers_view}>
                     { this.props.teachers.map(teacher => (
                         <Teacher key={teacher.id} teacher={teacher} match={match} />
                      ))}

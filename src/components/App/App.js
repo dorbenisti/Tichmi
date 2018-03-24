@@ -22,7 +22,7 @@ class App extends Component {
 
         const barContent = (
             <div className={styles.barContent}>
-                <Link to={`${match.path}/`}><img src={logo} className={styles.logo} /></Link>
+                <Link to={`${match.path}`}><img src={logo} className={styles.logo} /></Link>
                 <SearchBox />
             </div>
         );
@@ -49,7 +49,7 @@ class App extends Component {
                         <Switch>
                             <Route exact path={match.path} render={props => (
                                 <React.Fragment>
-                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
+                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={ {width: '63%'} } />
                                     <Teachers {...props} />
                                 </React.Fragment>
 

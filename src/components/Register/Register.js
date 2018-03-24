@@ -84,8 +84,8 @@ class Register extends Component {
                         value={state.gender}
                         onChange={(_, __, value) => this.setValue('gender', value)}>
 
-                        <MenuItem value={0} primaryText="Male" />
-                        <MenuItem value={1} primaryText="Female" />
+                        <MenuItem value={0} primaryText="זכר" />
+                        <MenuItem value={1} primaryText="נקבה" />
                     </SelectField>
                 </div>
                 <div className={styles.col}>

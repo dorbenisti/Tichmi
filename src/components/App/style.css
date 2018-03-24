@@ -14,12 +14,12 @@ body{
 
 .logo{
   border-radius: 10px;
-  width: 140px;
-  margin-top: 20px;
+  width: 150px;
 }
 
 .barContent {
   display: flex;
   justify-content: space-between;
   text-align: center;
+  align-items: center;
 }
