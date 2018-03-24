@@ -1,5 +1,5 @@
 import { LOGIN_FAILURE, LOGIN_SUCCESS, LOGIN_CALLED, LOGOUT_CALLED, LOGOUT_DONE } from "../constants";
-import { push } from 'react-router-redux'
+import { push } from 'react-router-redux';
 import axios from 'axios';
 
 const loginCalled = () => { 

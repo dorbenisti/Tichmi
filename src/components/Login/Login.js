@@ -7,6 +7,8 @@ import { LoginActions } from "../../actions";
 import { handleInputChange } from "common"
 import { Link } from 'react-router-dom';
 import logo from "../../images/Tichmi_logo.png";
+import axios from "axios";
+import { push } from 'react-router-redux';
 
 import styles from './style.css';
 
@@ -20,6 +22,17 @@ class Login extends Component {
         };
 
         this.handleInputChange = handleInputChange.bind(this);
+    }
+
+    componentDidMount() {
+
+        const { loginSuccess } = this.props.loginActions;
+        const { push } = this.props;
+
+        axios.get('/api/user').then(res => {
+            loginSuccess(res.data);
+            push('/');
+        });
     }
 
     render() {
@@ -56,7 +69,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        loginActions: bindActionCreators(LoginActions, dispatch)
+        loginActions: bindActionCreators(LoginActions, dispatch),
+        push: bindActionCreators(push, dispatch)
     };
 }
 
