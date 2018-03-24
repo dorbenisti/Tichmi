@@ -7,7 +7,8 @@
 
 .banner {
     padding-top: 20px;
-    height: 40%;
+    padding-right: 20px;
+    height: 220px;
     display: flex;
     flex-direction: row;
     background-color: rgb(25, 178, 209);
@@ -44,4 +45,46 @@
     margin-left: 20px;
     margin-top: 20px;
     font-weight: bold;
+}
+
+.extended-details {
+    padding-right: 30px;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    color: black;
+}
+
+.extended-details-title {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.extended-details-content {
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    width: 100%;
+
+    border-bottom: 1px solid black;
+}
+
+.contact-box {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    height: 50vh;
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: black;
+    background-color: white;
+    border: 1px double black;
+    padding-top: 20px
+}
+
+.contact-button {
+    margin-top: 30px;
 }

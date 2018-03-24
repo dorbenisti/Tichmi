@@ -7,7 +7,7 @@ import styles from "./StarsRating.css";
 
 export default class CustomStarsRating extends Component {
     render() {
-        const { rating, disabled, onChange } = this.props;
+        const { rating, disabled, onChange, className, ...rest } = this.props;
 
         const classes = [
             styles['custom-stars-rating'],
@@ -17,7 +17,7 @@ export default class CustomStarsRating extends Component {
         ];
 
         return (
-            <div className={classNames(classes)}>
+            <div className={classNames(classes, className || [])} {...rest}>
                 <StarsRating rating={rating} disabled={disabled} onRatingClick={onChange}/>
             </div>
         );

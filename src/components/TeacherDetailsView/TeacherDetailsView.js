@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import axios from "axios";
+import StarsRating from "../common-components/stars-rating/StarsRating";
+import RaisedButton from "material-ui/RaisedButton";
 
 import styles from './style.css';
 
@@ -40,14 +42,32 @@ class TeacherDetailsView extends Component {
                         {`₪${teacher.price}`}
                     </div>
                 </div>
+                <div className={styles['extended-details']}>
+                    <div className={styles['extended-details-title']}>על עצמי</div>
+                    <div className={styles['extended-details-content']}>
+                        {teacher.description}
+                    </div>
+                    <div className={styles['extended-details-title']}>תחומי לימוד</div>
+                    <div className={styles['extended-details-content']} style={{ paddingTop: '0' }}>
+                        {/* {(teacher.subjects.map(s => s.name)).join()} */}
+                        <ul>
+                        { teacher.subjects.map(s => (
+                            <li key={s.name}>{s.name}</li>
+                        )) }
+                        </ul>
+                    </div>
+                    <div className={styles['extended-details-title']}>הדרכה בקבוצות</div>
+                    <div className={styles['extended-details-content']}>
+                        {teacher.group_lesson ? 'כן' : 'לא'}
+                    </div>
+                </div>
+                <div className={styles['contact-box']}>
+                    {teacher.avgRating !== null && <StarsRating rating={teacher.avgRating} disabled={true} style={{ marginBottom: '10px' }} />}
+                    <div>ביקורות: {teacher.numOfReviews}</div>
+                    <RaisedButton className={styles['contact-button']} type="button" secondary={true} buttonStyle={{color:"white"}}>צור קשר</RaisedButton>
+                </div>
             </div>
         );
-
-        // return (
-        //     <div>
-        //         Teacher is {teacher.first_name} {teacher.last_name} from {teacher.city_name}
-        //     </div>
-        // );
     }
 }
 

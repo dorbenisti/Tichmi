@@ -31,9 +31,14 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
                 UNION
                 (select null as avgRating)
                 LIMIT 1
+                `, 
+                `
+                SELECT COUNT(*) as numOfReviews
+                FROM review
+                WHERE teacher_id=?
                 `);
  
-            params.push(id, id);
+            params.push(id, id, id);
         }
 
         connection.query(queries.join(';'), params, function (err, results) {
@@ -49,7 +54,7 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
             let extra = {};
 
             if (is_teacher) {
-                extra = { subjects: results[1], avgRating: results[2][0].avgRating };
+                extra = { subjects: results[1], avgRating: results[2][0].avgRating, numOfReviews: results[3][0].numOfReviews };
             }
 
             callback({ ...userRow, ...specializedUserDetails, ...extra });
