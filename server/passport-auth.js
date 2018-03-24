@@ -111,9 +111,9 @@ function register(req, email, password, done) {
         if (isTeacherAsNumber) {
 
             const fileName = `${shortid.generate()}.jpg`;
-            const { phone, price, subjects } = req.body;
-            subInsertQueries.push("INSERT INTO teacher (id, phone, price, image_url) values (?,?,?,?)");
-            secondInsertQueriesParams = [rows.insertId, phone, price, `/images/${fileName}`];
+            const { phone, price, subjects, description } = req.body;
+            subInsertQueries.push("INSERT INTO teacher (id, phone, price, image_url, description) values (?,?,?,?,?)");
+            secondInsertQueriesParams = [rows.insertId, phone, price, `/images/${fileName}`, description];
 
             for (let subject of JSON.parse(subjects)) {
                 subInsertQueries.push("INSERT INTO teacher_to_subject (teacher_id, subject_id) values (?,?)");
@@ -140,7 +140,7 @@ function register(req, email, password, done) {
 }
 
 function boolStringToDbBoolNumber(value) {
-    return value === "true" ? 1 : 0;
+    return (value === "true" || value === "1" || value === 1) ? 1 : 0;
 }
 
 function writeImageToFolder(file, filename) {

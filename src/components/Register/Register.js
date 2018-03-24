@@ -125,6 +125,9 @@ class Register extends Component {
                 <div className={styles.col}>
                     <SubjectSelect onChange={subject => this.setValue('subjects', subject)} value={state.subjects.map(s => s.id)} />
                 </div>
+                <div className={styles.col}>
+                    <TextField name="description" multiLine={true} floatingLabelText="תאר/י את עצמך בכמה משפטים" value={state.description} onChange={handleInputChange} required maxLength="300" />
+                </div>
                 <div className={styles.last}>
                     <ImageUpload style={{ marginTop: '5px' }} onChange={file => this.setValue('image', file)}/>
                 </div>
