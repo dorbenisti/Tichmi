@@ -1,4 +1,4 @@
-import { GET_ALL_TEACHERS_CALLED, GET_ALL_TEACHERS_FAIL, GET_ALL_TEACHERS_SUCCESS } from "../constants";
+import { GET_ALL_TEACHERS_CALLED, GET_ALL_TEACHERS_FAIL, GET_ALL_TEACHERS_SUCCESS, SET_SEARCH_TEXT } from "../constants";
 import axios from 'axios';
 
 const getAllTeachersStarted = () => {
@@ -23,6 +23,11 @@ const getAllTeachers = () => {
     };
 };
 
+const setSearchText = (selectedText) => {
+    return { type: SET_SEARCH_TEXT, searchText: selectedText};
+};
+
 export const TeachersActions = {
-    getAllTeachers
+    getAllTeachers,
+    setSearchText
 };

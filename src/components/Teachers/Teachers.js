@@ -28,23 +28,32 @@ class Teachers extends Component {
         } else {
             return (
                 <div className={styles.teachers_view}>
-                    { this.props.teachers.map(teacher => (
+                    { this.props.searchText ?
+                        this.filterBySubject(this.props.teachers, this.props.searchText).map(teacher => (
+                            <Teacher key={teacher.id} teacher={teacher} match={match} />
+                        ))
+                        : this.props.teachers.map(teacher => (
                         <Teacher key={teacher.id} teacher={teacher} match={match} />
                      ))}
                 </div>
             )
         }
     }
+
+    filterBySubject(teachers, subject) {
+        return teachers.filter(t => t.subjects.map(x => x.name).includes(subject));
+    }
 }
 
 function mapStateToProps(state) {
 
-    const { teachers, loading, error } = state.teachers;
+    const { teachers, loading, error, searchText } = state.teachers;
 
     return {
         teachers,
         loading,
-        error
+        error,
+        searchText
     };
 }
 

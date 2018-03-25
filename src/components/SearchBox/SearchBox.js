@@ -3,6 +3,9 @@ import styles from './style.css';
 import AutoComplete from 'material-ui/AutoComplete';
 import TextField from "material-ui/TextField";
 import RaisedButton from 'material-ui/RaisedButton';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { TeachersActions } from "../../actions";
 import axios from "axios";
 
 class SearchBox extends Component {
@@ -12,8 +15,12 @@ class SearchBox extends Component {
 
         this.state = {
             subjects: null,
-            selectedSubjectId: null
+            selectedSubjectId: null,
+            selectedText: ''
         };
+
+        this.searchInputChange = this.searchInputChange.bind(this);
+        this.searchTeachers = this.searchTeachers.bind(this);
     }
 
     componentDidMount() {
@@ -47,23 +54,44 @@ class SearchBox extends Component {
                     dataSourceConfig={dataSourceConfig}
                     filter={AutoComplete.noFilter}
                     floatingLabelFocusStyle={{color: "rgba(0, 0, 0, 0.3)"}}
-                    onNewRequest={(selected) => this.setState({
-                        selectedSubjectId: selected.value
-                    })}
+                    onUpdateInput={this.searchInputChange}
+                    onNewRequest={this.searchTeachers}
                 />
             );
         }
 
-        return <div className={styles.Finder}>
-            <h1>מאגר המורים הגדול בישראל!</h1>
-            <h2 className={styles['sub-title']}>מורים ומרצים מנוסים לכל המקצועות בכל הארץ</h2>
+        return (
+            <div>
+                <h1>מאגר המורים הגדול בישראל!</h1>
+                <h2 className={styles['sub-title']}>מורים ומרצים מנוסים לכל המקצועות בכל הארץ</h2>
 
-            {searchField}
+                {searchField}
 
-            <RaisedButton label="חפש" secondary={true} className={styles.button} />
-            <RaisedButton label="חיפוש מתקדם" secondary={true} className={styles.button} />
-        </div>;
+                <RaisedButton label="חפש" secondary={true} className={styles.button} onClick={this.searchTeachers} />
+                <RaisedButton label="חיפוש מתקדם" secondary={true} className={styles.button} />
+            </div>
+        );
+    }
+
+    searchInputChange(searchText) {
+        this.setState( { selectedText: searchText } );
+    }
+
+    searchTeachers() {
+        this.props.actions.setSearchText(this.state.selectedText);
     }
 }
 
-export default SearchBox;
+function mapStateToProps(state) {
+    const { searchText } = state.teachers;
+
+    return { searchText };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(TeachersActions, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBox);

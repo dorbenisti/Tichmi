@@ -58,7 +58,7 @@ class App extends Component {
                             <Route exact path={`${match.path}login/`} component={Login} />
                             <Route exact path={`${match.path}teacherDetails/:id/`} render={props => (
                                 <React.Fragment>
-                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} />
+                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={ {width: '63%'} } />
                                     <TeacherDetailsView {...props} />
                                 </React.Fragment>
                             )} />

@@ -1,7 +1,8 @@
-import { GET_ALL_TEACHERS_CALLED, GET_ALL_TEACHERS_FAIL, GET_ALL_TEACHERS_SUCCESS } from "../constants";
+import { GET_ALL_TEACHERS_CALLED, GET_ALL_TEACHERS_FAIL, GET_ALL_TEACHERS_SUCCESS, SET_SEARCH_TEXT } from "../constants";
 
 const defaultValue = { 
-    teachers: []
+    teachers: [],
+    searchText: ''
 };
 
 export default (state = defaultValue, action) => {
@@ -12,6 +13,8 @@ export default (state = defaultValue, action) => {
             return {...state, error: action.error, loading: false };
         case GET_ALL_TEACHERS_SUCCESS:
             return {...state, teachers: action.teachers, loading: false, error: null};
+        case SET_SEARCH_TEXT:
+            return {...state, searchText: action.searchText, loading: false, error: null};
         default: return state;
     }
 };
