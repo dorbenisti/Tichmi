@@ -61,8 +61,8 @@ class SearchBox extends Component {
         }
 
         return (
-            <div>
-                <h1>מאגר המורים הגדול בישראל!</h1>
+            <div className={'search-box'}>
+                <h1 className={styles['header-title']}>מאגר המורים הגדול בישראל!</h1>
                 <h2 className={styles['sub-title']}>מורים ומרצים מנוסים לכל המקצועות בכל הארץ</h2>
 
                 {searchField}

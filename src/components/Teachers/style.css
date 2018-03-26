@@ -3,4 +3,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    padding-left: 150px;
+    padding-right: 150px;
 }

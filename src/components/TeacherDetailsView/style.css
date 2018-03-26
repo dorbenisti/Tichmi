@@ -10,9 +10,8 @@
     height: 220px;
     display: flex;
     flex-direction: row;
-    background-color: rgb(25, 178, 209);
-
-    color: white;
+    background-color: rgb(1, 188, 212);
+    color: #ffffff;
     font-size: 16px;
 }
 

@@ -4,4 +4,10 @@
 
 .sub-title {
     margin-bottom: 0px;
+    color: white;
+    font-weight: normal;
+}
+
+.header-title {
+    color: white;
 }

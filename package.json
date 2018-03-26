@@ -122,6 +122,8 @@
     "extends": "react-app"
   },
   "nodemonConfig": {
-    "ignore": ["src/*"]
+    "ignore": [
+      "src/*"
+    ]
   }
 }
