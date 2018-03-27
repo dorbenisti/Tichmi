@@ -73,7 +73,7 @@ class App extends Component {
                         <Switch>
                             <Route exact path={match.path} render={props => (
                                 <React.Fragment>
-                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={ {width: '63%'} } />
+                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={ {width: '73%'} } />
                                     <Teachers {...props} />
                                 </React.Fragment>
 
