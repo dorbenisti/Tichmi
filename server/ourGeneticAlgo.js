@@ -36,11 +36,25 @@ CREATE TABLE `student` (
   PRIMARY KEY (`id`),
   CONSTRAINT `student_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+student: {
+    group_lesson: bool,
+    max_price: int,
+    max_km_distance: int,
+    lon,
+    lat
+}
+teachers: [{
+    group_lesson: bool,
+    price: int,
+    lon,
+    lat
+}]
 */
 
-export default (student, teachers, callback, errCallback) => {
+module.exports = (student, teachers, N = 15) => {
     const options = {
-        populationSize: 100,
+        populationFactory: () => {},
         terminationCondition: terminationCondition,
         fitnessEvaluator: fitnessEvaluator,
         natural: false,
@@ -53,6 +67,28 @@ export default (student, teachers, callback, errCallback) => {
         elitism: 0.05
     };
 
+    function terminationCondition(stats) {
+        return (stats.bestScore < 50) || stats.generation === 1000;
+    }
+
+    function mutate(candidate, mutationProbability, generator, callback) {
+        callback(candidate);
+    }
+
+    function fitnessEvaluator(candidate, callback) {
+        candidate = candidate.value;
+        let errorsSum = getDistanceBetweenCoordinatesInKM(candidate, student);
+
+        if (candidate.group_lesson !== student.group_lesson) errorsSum += 100;
+        if (candidate.price > student.max_price) errorsSum += 100;
+
+        return callback(null, errorsSum);
+    }
+
+    function crossover(parent1, parent2, points, generator, callback) {
+        return callback([parent1, parent2]);
+    }
+
     const algorithm = new Genetical(options);
 
     let population;
@@ -62,18 +98,30 @@ export default (student, teachers, callback, errCallback) => {
         }
     });
 
-    algorithm.on('error', function (err) {
-        errCallback(err);
-    });
-
     algorithm.on('population evaluated', p => {
         population = p;
-    })
+    });
 
-    algorithm.solve(() => {
-        const orderedPopulation = [...population].sortBy((a, b) => a.score - b.score);
-        const first15 = orderedPopulation.slice(0, Math.min(14, orderedPopulation.length - 1));
-        const dataToRet = first15.map(pair => pair.value);
-        callback(dataToRet);
+    return new Promise((resolve, reject) => {
+        algorithm.on('error', reject);
+
+        const internalStructure = teachers.map(t => ({ value: t }));
+        algorithm.solve(internalStructure, () => {
+            const orderedPopulation = [...population].sort((a, b) => a.score - b.score);
+            const firstN = orderedPopulation.slice(0, Math.min(N, orderedPopulation.length - 1));
+            const dataToRet = firstN.map(pair => pair.value);
+
+            resolve(dataToRet);
+        });
     });
 };
+
+function getDistanceBetweenCoordinatesInKM({lat: lat1, lon: lon1}, {lat: lat2, lon: lon2}) {
+    const p = Math.PI / 180;
+    const c = Math.cos;
+    const a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+        (1 - c((lon2 - lon1) * p)) / 2;
+
+    return 12742 * Math.asin(Math.sqrt(a));
+}

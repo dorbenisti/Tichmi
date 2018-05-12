@@ -72,7 +72,7 @@
     "start": "concurrently \"node scripts/start.js\" \"nodemon server\"",
     "start-debug": "set DEBUG=express:* & concurrently \"node scripts/start.js\" \"nodemon server\"",
     "build": "node scripts/build.js",
-    "test": "mocha -w"
+    "test": "mocha --inspect -w"
   },
   "devDependencies": {
     "assert": "^1.4.1",
