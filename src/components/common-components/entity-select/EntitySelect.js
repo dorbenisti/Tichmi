@@ -6,7 +6,6 @@ import PropTypes from "prop-types";
 import ServerDataCache from "./ServerDataCache";
 
 export default class EntitySelect extends Component {
-    
     constructor(props) {
         super(props);
 
@@ -17,19 +16,17 @@ export default class EntitySelect extends Component {
 
     componentDidMount() {
         const { onChange, valuesCache, multiple } = this.props;
-
-        const callback = values => {
-
+        
+        valuesCache.GetData.then(values => {
             this.setState({
                 values
             });
 
             onChange(multiple ? [] : values[0]);
-        };
-        
-        valuesCache.GetOrFetchData(callback, err => {});
+        });
     }
 
+    // TODO: Move this to proptypes
     componentWillReceiveProps(nextProps) {
         const { value, multiple } = nextProps;
 
@@ -40,7 +37,6 @@ export default class EntitySelect extends Component {
     }
 
     render() {
-
         const { values } = this.state;
 
         if (!values) return (<div>Loading...</div>);
@@ -77,10 +73,10 @@ export default class EntitySelect extends Component {
     }
 
     static propTypes = {
-        valuesCache: PropTypes.instanceOf(ServerDataCache),
+        valuesCache: PropTypes.instanceOf(ServerDataCache).isRequired,
         labelText: PropTypes.string.isRequired,
         onChange: PropTypes.func.isRequired,
-        value: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number]),
+        value: ensureValueMatchesMultiple,//PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number]),
         multiple: PropTypes.bool
     };
 
@@ -89,3 +85,37 @@ export default class EntitySelect extends Component {
         value: null
     };
 }
+
+
+function ensureValueMatchesMultiple(props, propName, componentName) {
+    const { value } = props;
+
+    if (!value) return;
+
+    if (props.multiple) {
+        if (!Array.isArray(value) ||
+            value.some(val => typeof val !== 'number')) {
+                return new Error(
+                    'Invalid prop `' + propName + '` supplied to' +
+                    ' `' + componentName + '`. multiple=true and therefore it must be either undefined or array of numbers.'
+                  );
+            }
+    } else {
+        if (typeof value !== 'number') {
+            return new Error(
+                'Invalid prop `' + propName + '` supplied to' +
+                ' `' + componentName + '`. multiple=false and therefore it must be either undefined or number.'
+              );
+        }
+    }
+}
+/*
+customProp: function(props, propName, componentName) {
+    if (!/matchme/.test(props[propName])) {
+      return new Error(
+        'Invalid prop `' + propName + '` supplied to' +
+        ' `' + componentName + '`. Validation failed.'
+      );
+    }
+  },
+*/

@@ -5,15 +5,11 @@ export default class ServerDataCache {
         this.url = url;
     }
 
-    GetOrFetchData(callback, errCallback) {
+    GetData() {
         if (this.data) {
-            callback(this.data);
+            return Promise.resolve(this.data);
         }
 
-        axios.get(this.url).then(res => {
-            this.data = res.data;
-
-            callback(res.data);
-        }, err => errCallback(err));
+        return axios.get(this.url).then(res => res.data);
     }
 }

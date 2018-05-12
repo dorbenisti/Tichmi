@@ -12,13 +12,12 @@ let options = {
         mutate: mutate,
         mutationProbability : 0.02
     },
-    islandOptions: {
-        islands: 5,
-        migration: 0.1,
-        epoch: 10
-    },
-    elitism: 0.05,
-    seed: 2
+    // islandOptions: {
+    //     islands: 5,
+    //     migration: 0.1,
+    //     epoch: 10
+    // },
+    elitism: 0.05
 };
 
 let stringAlgorithm = new Genetical(options);
@@ -38,6 +37,12 @@ stringAlgorithm.on('initial population created', function (initialPopulation) {
 stringAlgorithm.on('error', function (err) {
     console.log('error', err);
 });
+
+// THIS IS GUT
+stringAlgorithm.on('population evaluated', p => {
+    population = p;
+    //console.log('population evaluated', arguments);
+})
 
 function populationFactory(population, populationSize, generator, callback) {
     let string = '';
