@@ -52,7 +52,7 @@ class Teacher extends Component {
                             <ListItem primaryText={teacher.city_name} leftIcon={<HouseIcon />} />
                             <ListItem primaryText={`₪${teacher.price}`} leftIcon={<MoneyIcon />} />
                             <ListItem primaryText={subjectsString} leftIcon={<SubjectIcon />} />
-                            {teacher.avgRating !== null && <StarsRating rating={teacher.avgRating} disabled={true} />}
+                            {teacher.avgRating !== null && <StarsRating rating={teacher.avgRating ? teacher.avgRating : 0} disabled={true} />}
                             {teacher.avgRating === null && <div>No rating to show...</div>}
                         </List>
                     </CardText>

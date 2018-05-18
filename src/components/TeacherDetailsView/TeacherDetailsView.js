@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import axios from "axios";
 import StarsRating from "../common-components/stars-rating/StarsRating";
-import RaisedButton from "material-ui/RaisedButton";
+import { RaisedButton, FlatButton, Dialog, TextField } from "material-ui";
 
 import styles from './style.css';
 
@@ -12,8 +12,18 @@ class TeacherDetailsView extends Component {
         super(props);
 
         this.state = {
-            teacher: null
+            teacher: null,
+            contactDialogOpen: false,
+            reviewDialogOpen: false,
+            chosenRating: 0,
         };
+
+        this.onRatingChange = this.onRatingChange.bind(this);
+        this.handleContactDialogOpen = this.handleContactDialogOpen.bind(this);
+        this.handleContactDialogClose = this.handleContactDialogClose.bind(this);
+        this.handleReviewDialogOpen = this.handleReviewDialogOpen.bind(this);
+        this.handleReviewDialogClose = this.handleReviewDialogClose.bind(this);
+        this.handleReviewSubmit = this.handleReviewSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -25,7 +35,16 @@ class TeacherDetailsView extends Component {
     }
 
     render() {
-        const { teacher } = this.state;
+        const contactActions = [
+            <FlatButton label='סגור' onClick={this.handleContactDialogClose} primary={true}/>
+        ];
+
+        const reviewActions = [
+            <FlatButton label='סגור' onClick={this.handleReviewDialogClose} primary={true}/>,
+            <FlatButton label='שלח' onClick={this.handleReviewSubmit} primary={true}/>
+        ];
+
+        const { teacher, contactDialogOpen, reviewDialogOpen, chosenRating } = this.state;
 
         if (!teacher) return (<div>Loading...</div>);
 
@@ -62,12 +81,66 @@ class TeacherDetailsView extends Component {
                     </div>
                 </div>
                 <div className={styles['contact-box']}>
-                    {teacher.avgRating !== null && <StarsRating rating={teacher.avgRating} disabled={true} style={{ marginBottom: '10px' }} />}
-                    <div>ביקורות: {teacher.numOfReviews}</div>
-                    <RaisedButton className={styles['contact-button']} type="button" secondary={true} buttonStyle={{color:"white"}}>צור קשר</RaisedButton>
+                    <span>דירוג ממוצע:</span>
+                    <StarsRating rating={teacher.avgRating ? teacher.avgRating : 0} style={{ marginBottom: '10px' }} disabled={true}/>
+                    <FlatButton onClick={}>ביקורות: {teacher.numOfReviews}</FlatButton>
+                    <Dialog title='ביקורות' open={}>
+                        <div></div>
+                    </Dialog>
+                    <RaisedButton
+                        className={styles['contact-button']}
+                        type="button"
+                        secondary={true}
+                        buttonStyle={{color:"white"}}
+                        onClick={this.handleReviewDialogOpen}>
+                        הוסף ביקורת
+                    </RaisedButton>
+                    <RaisedButton
+                        className={styles['contact-button']}
+                        type="button"
+                        secondary={true}
+                        buttonStyle={{color:"white"}}
+                        onClick={this.handleContactDialogOpen}>
+                        צור קשר
+                    </RaisedButton>
+                    <Dialog title={'הוספת ביקורת'} open={reviewDialogOpen} onRequestClose={this.handleReviewDialogClose} actions={reviewActions}>
+                        <b>{`${teacher.first_name} ${teacher.last_name}`}</b>
+                        <StarsRating rating={chosenRating} style={{ marginBottom: '10px' }} onChange={this.onRatingChange}/>
+                        <TextField /> // TODO: continue this dialog...
+                    </Dialog>
                 </div>
+                <Dialog title={'צור קשר'} open={contactDialogOpen} onRequestClose={this.handleContactDialogClose} actions={contactActions}>
+                    <b>{`${teacher.first_name} ${teacher.last_name}`}</b>
+                    <p>{`כתובת מייל:  ${teacher.email}`}</p>
+                    <p>{`פלאפון:  ${teacher.phone}`}</p>
+                </Dialog>
             </div>
         );
+    }
+
+    onRatingChange(newRating) {
+        this.setState({chosenRating: newRating});
+    }
+
+    handleReviewSubmit() {
+        // TODO: update DB with the new rating via server side
+        this.handleReviewDialogClose();
+    }
+
+    handleContactDialogOpen() {
+        this.setState({ contactDialogOpen: true });
+    }
+
+    handleContactDialogClose() {
+        this.setState({ contactDialogOpen: false });
+    }
+
+    handleReviewDialogOpen() {
+        this.setState({ reviewDialogOpen: true });
+    }
+
+    handleReviewDialogClose() {
+        this.setState({ reviewDialogOpen: false });
     }
 }
 
