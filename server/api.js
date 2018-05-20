@@ -3,21 +3,22 @@ const passport = require('passport');
 
 const openConnection = require('./createDbConnection');
 const { getAllTeachers, getUser } = require('./UserUtils');
+const GeneticAlgorithm = require("./ourGeneticAlgo");
 
-const sendOk = (req, res) => {
+const sendOkWithUser = (req, res) => {
     res.send(req.user);
 };
 
-api.post('/register', passport.authenticate('local-signup', { failureMessage: true }), sendOk)
+api.post('/register', passport.authenticate('local-signup', { failureMessage: true }), sendOkWithUser)
 
-    .post('/login', passport.authenticate('local-login', { failureMessage: true }), sendOk)
+    .post('/login', passport.authenticate('local-login', { failureMessage: true }), sendOkWithUser)
 
     .get('/user', (req, res) => {
         if (req.user && req.user.email) {
             return res.send(req.user.email);
         }
 
-        return res.status(404).end();
+        return res.sendStatus(404).end();
     })
 
     .get('/logout', (req, res) => {
@@ -28,10 +29,11 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
     .get('/teacher/:id', (req, res) => {
         useDbConnection((conn, end) => {
             getUser(conn, 'id', req.params.id, teacher => {
-                res.json(teacher);
+                const { password, ...teacherWithoutPassword } = teacher;
+                res.json(teacherWithoutPassword);
                 end();
             }, (err) => {
-                res.status(500).send(err);
+                res.sendStatus(500).send(err);
                 end();
             });
         }, true);
@@ -43,7 +45,7 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
                 res.json(teachers);
                 end();
             }, (err) => {
-                res.status(500).send(err);
+                res.sendStatus(500).send(err);
                 end();
             });
         }, true);
@@ -53,7 +55,7 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
         useDbConnection(conn => {
             conn.query('select id, name from city order by `name` ASC', (err, rows) => {
                 if (err) {
-                   return res.status(500).send(err);
+                    return res.sendStatus(500).send(err);
                 }
 
                 res.json(rows);
@@ -65,7 +67,7 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
         useDbConnection(conn => {
             conn.query('select id, display_name as `name` from subject order by `display_name` ASC', (err, rows) => {
                 if (err) {
-                   return res.status(500).send(err);
+                    return res.sendStatus(500).send(err);
                 }
 
                 res.json(rows);
@@ -73,16 +75,97 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
         });
     })
 
+    .post('/review', (req, res) => {
+        if (!req.user || req.user.is_teacher) {
+            return res.sendStatus(401).end();
+        }
+
+        const { id: studentId } = req.user;
+        const { teacherId, ratings, reviewText } = req.body;
+
+        useDbConnection((conn, end) => {
+            conn.query('INSERT INTO review (teacher_id, student_id, rating, content) values (?,?,?,?)',
+                [teacherId, studentId, ratings, reviewText], (err, rows) => {
+                    end();
+
+                    if (err) {
+                        return res.status(500).send(err);
+                    }
+
+                    return res.sendStatus(200).end();
+                })
+        }, true);
+    })
+
+    .get('/relevant-teachers/:subjectId', (req, res) => {
+        if (!req.user || req.user.is_teacher) {
+            return res.sendStatus(401).end();
+        }
+
+        const { subjectId } = req.params;
+        
+        const queries = [
+            `
+            SELECT lon, lat
+            FROM city c, user u
+            WHERE u.city_id=c.id AND u.id=?
+            `, 
+            `
+            SELECT t.id, c.lon, c.lat, t.price, u.group_lesson
+            FROM user u, teacher t, city c, teacher_to_subject tts
+            WHERE u.id=t.id AND
+                  u.city_id=c.id AND
+                  tts.teacher_id=t.id AND
+                  tts.subject_id=? AND
+                  t.price >= ?
+            `
+        ];
+
+        const params = [req.user.id, subjectId, req.user.min_price];
+
+        useDbConnection((conn, end) => {
+            conn.query(queries, params, (err, results) => {
+                end();
+
+                if (err) {
+                    return res.status(500).send(err);
+                }
+
+                const student = { ...req.user, ...results[0][0] };
+                const teachers = results[1];
+
+                GeneticAlgorithm(student, teachers).then(results => {
+                    const teachersResultsArr = [];
+
+                    const cbk = teacher => {
+                        const { password, ...teacherWithoutPassword } = teacher;
+                        teachersResultsArr.push(teacherWithoutPassword);
+
+                        if (teachersResultsArr.length === results.length) {
+                            res.json(teachersResultsArr);
+                        }
+                    };
+
+                    for (let teacher of results) {
+                        const { id } = teacher;
+            
+                        getUser(connection, 'id', id, successCallback, errorCallback);
+                    }
+                });
+            });
+        }, true)
+    })
+
     // No routes matched? 404.
     .use((req, res) => {
-        return res.status(404).end();
+        return res.sendStatus(404).end();
     });
 
-function useDbConnection(callback, isAsync=false) {
+function useDbConnection(callback, isAsync = false) {
     let connection = null;
 
     const closeConn = () => connection && connection.end();
-    const currCloseConn = isAsync ? () => {} : closeConn;
+    const currCloseConn = isAsync ? () => { } : closeConn;
 
     try {
         connection = openConnection();

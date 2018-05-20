@@ -24,7 +24,10 @@ const getAllTeachers = () => {
 };
 
 const setSearchText = (selectedText) => {
-    return { type: SET_SEARCH_TEXT, searchText: selectedText};
+    //return { type: SET_SEARCH_TEXT, searchText: selectedText};
+    return dispatch => {
+        axios.get('/api/relevant-teachers/')
+    };
 };
 
 export const TeachersActions = {

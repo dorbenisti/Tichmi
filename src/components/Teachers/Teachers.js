@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './style.css';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {GridList, GridTile} from 'material-ui/GridList';
+import { GridList, GridTile } from 'material-ui/GridList';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TeachersActions } from "../../actions";
@@ -28,13 +28,15 @@ class Teachers extends Component {
         } else {
             return (
                 <div className={styles.teachers_view}>
-                    { this.props.searchText ?
+                    {this.props.teachers.map(teacher => (
+                        <Teacher key={teacher.id} teacher={teacher} match={match} />))}
+                    {/* { this.props.searchText ?
                         this.filterBySubject(this.props.teachers, this.props.searchText).map(teacher => (
                             <Teacher key={teacher.id} teacher={teacher} match={match} />
                         ))
                         : this.props.teachers.map(teacher => (
                         <Teacher key={teacher.id} teacher={teacher} match={match} />
-                     ))}
+                     ))} */}
                 </div>
             )
         }

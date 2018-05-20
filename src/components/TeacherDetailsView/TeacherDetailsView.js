@@ -36,18 +36,12 @@ class TeacherDetailsView extends Component {
 
     render() {
         const contactActions = [
-            <FlatButton label='סגור' onClick={this.handleContactDialogClose} primary={true}/>
-        ];
-
-        const reviewActions = [
-            <FlatButton label='סגור' onClick={this.handleReviewDialogClose} primary={true}/>,
-            <FlatButton label='שלח' onClick={this.handleReviewSubmit} primary={true}/>
+            <FlatButton label='סגור' onClick={this.handleContactDialogClose} primary={true} />
         ];
 
         const { teacher, contactDialogOpen, reviewDialogOpen, chosenRating } = this.state;
 
         if (!teacher) return (<div>Loading...</div>);
-
 
         return (
             <div className={styles.container}>
@@ -70,9 +64,9 @@ class TeacherDetailsView extends Component {
                     <div className={styles['extended-details-content']} style={{ paddingTop: '0' }}>
                         {/* {(teacher.subjects.map(s => s.name)).join()} */}
                         <ul>
-                        { teacher.subjects.map(s => (
-                            <li key={s.name}>{s.name}</li>
-                        )) }
+                            {teacher.subjects.map(s => (
+                                <li key={s.name}>{s.name}</li>
+                            ))}
                         </ul>
                     </div>
                     <div className={styles['extended-details-title']}>הדרכה בקבוצות</div>
@@ -82,16 +76,16 @@ class TeacherDetailsView extends Component {
                 </div>
                 <div className={styles['contact-box']}>
                     <span>דירוג ממוצע:</span>
-                    <StarsRating rating={teacher.avgRating ? teacher.avgRating : 0} style={{ marginBottom: '10px' }} disabled={true}/>
-                    <FlatButton onClick={}>ביקורות: {teacher.numOfReviews}</FlatButton>
-                    <Dialog title='ביקורות' open={}>
+                    <StarsRating rating={teacher.avgRating ? teacher.avgRating : 0} style={{ marginBottom: '10px' }} disabled={true} />
+                    <FlatButton>ביקורות: {teacher.numOfReviews}</FlatButton>  {/* onClick={}*/}
+                    <Dialog title='ביקורות'>  {/* open={}*/}
                         <div></div>
                     </Dialog>
                     <RaisedButton
                         className={styles['contact-button']}
                         type="button"
                         secondary={true}
-                        buttonStyle={{color:"white"}}
+                        buttonStyle={{ color: "white" }}
                         onClick={this.handleReviewDialogOpen}>
                         הוסף ביקורת
                     </RaisedButton>
@@ -99,15 +93,11 @@ class TeacherDetailsView extends Component {
                         className={styles['contact-button']}
                         type="button"
                         secondary={true}
-                        buttonStyle={{color:"white"}}
+                        buttonStyle={{ color: "white" }}
                         onClick={this.handleContactDialogOpen}>
                         צור קשר
                     </RaisedButton>
-                    <Dialog title={'הוספת ביקורת'} open={reviewDialogOpen} onRequestClose={this.handleReviewDialogClose} actions={reviewActions}>
-                        <b>{`${teacher.first_name} ${teacher.last_name}`}</b>
-                        <StarsRating rating={chosenRating} style={{ marginBottom: '10px' }} onChange={this.onRatingChange}/>
-                        <TextField /> // TODO: continue this dialog...
-                    </Dialog>
+                    <ReviewSubmitModal teacher={teacher} isModalOpen={reviewDialogOpen} handleClose={this.handleReviewDialogClose} />
                 </div>
                 <Dialog title={'צור קשר'} open={contactDialogOpen} onRequestClose={this.handleContactDialogClose} actions={contactActions}>
                     <b>{`${teacher.first_name} ${teacher.last_name}`}</b>
@@ -119,7 +109,7 @@ class TeacherDetailsView extends Component {
     }
 
     onRatingChange(newRating) {
-        this.setState({chosenRating: newRating});
+        this.setState({ chosenRating: newRating });
     }
 
     handleReviewSubmit() {
@@ -149,5 +139,41 @@ const mapStateToProps = (state, ownProps) => {
 
     return { id };
 };
+
+class ReviewSubmitModal extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleReviewSubmit = this.handleReviewSubmit.bind(this);
+
+        this.state = {
+            ratings: 0,
+            reviewText: ""
+        };
+    }
+
+    handleReviewSubmit() {
+        const { teacher, handleClose } = this.props;
+        const { ratings, reviewText } = this.state;
+
+        axios.post('/api/review', { ratings, reviewText, teacherId: teacher.id }).then(handleClose);
+    }
+
+    render() {
+        const { teacher, isModalOpen, handleClose } = this.props;
+        const { ratings, reviewText } = this.state;
+
+        const reviewActions = [
+            <FlatButton label='סגור' onClick={handleClose} primary={true} />,
+            <FlatButton label='שלח' onClick={this.handleReviewSubmit} primary={true} disabled={!ratings || !reviewText} />
+        ];
+
+        return (<Dialog title={'הוספת ביקורת'} open={isModalOpen} onRequestClose={handleClose} actions={reviewActions}>
+            <b>{`${teacher.first_name} ${teacher.last_name}`}</b>
+            <StarsRating rating={ratings} style={{ marginBottom: '10px' }} onChange={ratings => this.setState({ratings})} />
+            <TextField multiLine={true} rows={2} rowsMax={4} value={reviewText} onChange={(e, reviewText) => this.setState({reviewText})} /> 
+        </Dialog>);
+    }
+}
 
 export default connect(mapStateToProps)(TeacherDetailsView);

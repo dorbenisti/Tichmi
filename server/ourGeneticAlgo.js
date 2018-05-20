@@ -3,7 +3,6 @@ const Genetical = require('genetical');
 /*
 Filter teachers that have the requested subject
 Filter by minPrice
-Use Google Geomapping to get distances between cities, add distance in meters as points
 group_lesson incompatability will add 1000 points
 maxPrice violation will add 1000 points
 

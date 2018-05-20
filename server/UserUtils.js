@@ -21,24 +21,14 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
             queries.push(`
                 SELECT s.id as id, s.display_name as \`name\`
                 FROM teacher_to_subject m2m, subject s
-                WHERE m2m.subject_id = s.id AND m2m.teacher_id=?`, 
+                WHERE m2m.subject_id = s.id AND m2m.teacher_id=?`,
                 `
-                (SELECT s.avgRating
-                FROM (SELECT teacher_id id, avg(rating) avgRating
-                      FROM review
-                      GROUP BY teacher_id) s
-                WHERE id=?)
-                UNION
-                (select null as avgRating)
-                LIMIT 1
-                `, 
-                `
-                SELECT COUNT(*) as numOfReviews
+                SELECT creation_time, update_time, rating, content
                 FROM review
                 WHERE teacher_id=?
                 `);
  
-            params.push(id, id, id);
+            params.push(id, id);
         }
 
         connection.query(queries.join(';'), params, function (err, results) {
@@ -54,7 +44,16 @@ function getUser(connection, whereFieldName, whereFieldValue, callback, errCallb
             let extra = {};
 
             if (is_teacher) {
-                extra = { subjects: results[1], avgRating: results[2][0].avgRating, numOfReviews: results[3][0].numOfReviews };
+                const reviews = results[2];
+
+                let avgRating = null;
+                
+                if (reviews.length) {
+                    const sum = reviews.reduce((agg, curr) => agg + curr.rating, 0);
+                    avgRating = sum / reviews.length;
+                }
+
+                extra = { subjects: results[1], avgRating, reviews };
             }
 
             callback({ ...userRow, ...specializedUserDetails, ...extra });
@@ -74,8 +73,9 @@ function getAllTeachers(connection, callback, errCallback) {
         let allTeachers = [];
 
         const successCallback = teacher => {
+            const { password, ...teacherWithoutPassword } = teacher;
             wrapWithNumOfCallbacks(() => {
-                allTeachers.push(teacher);
+                allTeachers.push(teacherWithoutPassword);
             });
         };
 

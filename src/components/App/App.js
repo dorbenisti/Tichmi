@@ -16,9 +16,7 @@ import logo3 from "../../images/tichmi_logo3.png";
 import styles from './style.css';
 
 class App extends Component {
-
     render() {
-
         const { match, user, location } = this.props;
         const loggedIn = user;
 
@@ -51,21 +49,6 @@ class App extends Component {
             );
         }
 
-        let rightButtons2 = (
-            <div className={styles.rightButtons2}>
-                <span>שלום אורח</span>
-            </div>
-        );
-
-        if (user) {
-            rightButtons2 = (
-                <div className={styles.rightButtons2}>
-                    <span>ברוך הבא {user}</span>
-                    <RaisedButton className={styles.link} onClick={this.props.actions.logout} label="התנתק" />
-                </div>
-            );
-        }
-
         return (
             (!loggedIn && pathNeedsAuth(location.pathname)) ? (
                 <Redirect to={`${match.path}login/?originUrl=${location.pathname}`} />) : (
@@ -73,7 +56,7 @@ class App extends Component {
                         <Switch>
                             <Route exact path={match.path} render={props => (
                                 <React.Fragment>
-                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={ {width: '73%'} } />
+                                    <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={{ width: '73%' }} />
                                     <Teachers {...props} />
                                 </React.Fragment>
 
@@ -82,8 +65,7 @@ class App extends Component {
                             <Route exact path={`${match.path}login/`} component={Login} />
                             <Route exact path={`${match.path}teacherDetails/:id/`} render={props => (
                                 <React.Fragment>
-
-                                    <AppBar style={{backgroundColor: '#fffaf1', height: '66px'}} iconElementLeft={headerContent} iconElementRight={rightButtons2}/>
+                                    <AppBar style={{ backgroundColor: '#fffaf1', height: '66px' }} iconElementLeft={headerContent} iconElementRight={rightButtons} />
                                     <TeacherDetailsView {...props} />
                                 </React.Fragment>
                             )} />
