@@ -1,7 +1,7 @@
-import { GET_ALL_TEACHERS_CALLED, GET_ALL_TEACHERS_FAIL, GET_ALL_TEACHERS_SUCCESS, SET_SEARCH_TEXT } from "../constants";
+import { GET_ALL_TEACHERS_CALLED, GET_ALL_TEACHERS_FAIL, GET_ALL_TEACHERS_SUCCESS } from "../constants";
 import axios from 'axios';
 
-const getAllTeachersStarted = () => {
+const getAllTeachersStarted = (subjectId = null) => {
     return { type: GET_ALL_TEACHERS_CALLED };
 }
 
@@ -13,24 +13,24 @@ const getAllTeachersFailed = (error) => {
     return { type: GET_ALL_TEACHERS_FAIL, error };
 };
 
-const getAllTeachers = () => {
+const getAllTeachers = (subjectId = null) => {
     return dispatch => {
         dispatch(getAllTeachersStarted());
 
-        axios.get('/api/teachers').then(res => {
+        let promise;
+
+        if (subjectId === null) {
+            promise = axios.get('/api/teachers');
+        } else {
+            promise = axios.get(`/api/relevant-teachers/${subjectId}`);
+        }
+
+        promise.then(res => {
             dispatch(getAllTeachersSuccess(res.data));
         }, err => dispatch(getAllTeachersFailed(err)));
     };
 };
 
-const setSearchText = (selectedText) => {
-    //return { type: SET_SEARCH_TEXT, searchText: selectedText};
-    return dispatch => {
-        axios.get('/api/relevant-teachers/')
-    };
-};
-
 export const TeachersActions = {
-    getAllTeachers,
-    setSearchText
+    getAllTeachers
 };

@@ -53,6 +53,7 @@ teachers: [{
 
 module.exports = (student, teachers, N = 15) => {
     const options = {
+        populationSize: 100,
         populationFactory: () => {},
         terminationCondition: terminationCondition,
         fitnessEvaluator: fitnessEvaluator,

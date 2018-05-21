@@ -13,8 +13,6 @@ export default (state = defaultValue, action) => {
             return {...state, error: action.error, loading: false };
         case GET_ALL_TEACHERS_SUCCESS:
             return {...state, teachers: action.teachers, loading: false, error: null};
-        case SET_SEARCH_TEXT:
-            return {...state, searchText: action.searchText, loading: false, error: null};
         default: return state;
     }
 };

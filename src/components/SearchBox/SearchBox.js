@@ -18,9 +18,6 @@ class SearchBox extends Component {
             selectedSubjectId: null,
             selectedText: ''
         };
-
-        this.searchInputChange = this.searchInputChange.bind(this);
-        this.searchTeachers = this.searchTeachers.bind(this);
     }
 
     componentDidMount() {
@@ -35,7 +32,6 @@ class SearchBox extends Component {
     }
 
     render() {
-
         const { subjects, selectedSubjectId } = this.state;
 
         let searchField;
@@ -54,8 +50,7 @@ class SearchBox extends Component {
                     dataSourceConfig={dataSourceConfig}
                     filter={AutoComplete.noFilter}
                     floatingLabelFocusStyle={{color: "rgba(0, 0, 0, 0.3)"}}
-                    onUpdateInput={this.searchInputChange}
-                    onNewRequest={this.searchTeachers}
+                    onNewRequest={(_, idx) => this.searchTeachers(subjects[idx].value)}
                 />
             );
         }
@@ -73,12 +68,8 @@ class SearchBox extends Component {
         );
     }
 
-    searchInputChange(searchText) {
-        this.setState( { selectedText: searchText } );
-    }
-
-    searchTeachers() {
-        this.props.actions.setSearchText(this.state.selectedText);
+    searchTeachers(subjectId) {
+        this.props.actions.getAllTeachers(subjectId);
     }
 }
 

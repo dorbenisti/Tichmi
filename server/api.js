@@ -103,13 +103,13 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
         }
 
         const { subjectId } = req.params;
-        
+
         const queries = [
             `
             SELECT lon, lat
             FROM city c, user u
             WHERE u.city_id=c.id AND u.id=?
-            `, 
+            `,
             `
             SELECT t.id, c.lon, c.lat, t.price, u.group_lesson
             FROM user u, teacher t, city c, teacher_to_subject tts
@@ -121,18 +121,22 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
             `
         ];
 
-        const params = [req.user.id, subjectId, req.user.min_price];
+        const params = [req.user.id, +subjectId, req.user.min_price];
 
         useDbConnection((conn, end) => {
-            conn.query(queries, params, (err, results) => {
-                end();
-
+            conn.query(queries.join(';'), params, (err, results) => {
                 if (err) {
+                    end();
                     return res.status(500).send(err);
                 }
 
                 const student = { ...req.user, ...results[0][0] };
                 const teachers = results[1];
+
+                if (!teachers.length) {
+                    end();
+                    return res.json([]);
+                }
 
                 GeneticAlgorithm(student, teachers).then(results => {
                     const teachersResultsArr = [];
@@ -142,16 +146,17 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
                         teachersResultsArr.push(teacherWithoutPassword);
 
                         if (teachersResultsArr.length === results.length) {
+                            end();
                             res.json(teachersResultsArr);
                         }
                     };
 
                     for (let teacher of results) {
                         const { id } = teacher;
-            
-                        getUser(connection, 'id', id, successCallback, errorCallback);
+
+                        getUser(conn, 'id', id, cbk, err => res.status(500).send(err));
                     }
-                });
+                }, err => res.status(500).send(err));
             });
         }, true)
     })
