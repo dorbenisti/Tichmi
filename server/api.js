@@ -111,11 +111,20 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
             WHERE u.city_id=c.id AND u.id=?
             `,
             `
-            SELECT t.id, c.lon, c.lat, t.price, u.group_lesson
-            FROM user u, teacher t, city c, teacher_to_subject tts
+            SELECT t.id, c.lon, c.lat, t.price, u.group_lesson, avgs.avgRating
+            FROM user u, teacher t, city c, teacher_to_subject tts,
+                ((SELECT t.id, avg(r.rating) avgRating
+                 FROM teacher t, review r
+                 WHERE t.id=r.teacher_id
+                 GROUP BY t.id)
+                 UNION
+                 (SELECT t.id, 0
+                  FROM teacher t
+                  where t.id NOT IN (SELECT teacher_id from review))) avgs
             WHERE u.id=t.id AND
                   u.city_id=c.id AND
                   tts.teacher_id=t.id AND
+                  avgs.id=t.id AND
                   tts.subject_id=? AND
                   t.price >= ?
             `

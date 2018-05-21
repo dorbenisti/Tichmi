@@ -5,8 +5,8 @@ const getAllTeachersStarted = (subjectId = null) => {
     return { type: GET_ALL_TEACHERS_CALLED };
 }
 
-const getAllTeachersSuccess = teachers => {
-    return { type: GET_ALL_TEACHERS_SUCCESS, teachers };
+const getAllTeachersSuccess = (teachers, isFiltered) => {
+    return { type: GET_ALL_TEACHERS_SUCCESS, teachers, isFiltered };
 };
 
 const getAllTeachersFailed = (error) => {
@@ -19,14 +19,15 @@ const getAllTeachers = (subjectId = null) => {
 
         let promise;
 
-        if (subjectId === null) {
+        let isFiltered = subjectId !== null;
+        if (!isFiltered) {
             promise = axios.get('/api/teachers');
         } else {
             promise = axios.get(`/api/relevant-teachers/${subjectId}`);
         }
 
         promise.then(res => {
-            dispatch(getAllTeachersSuccess(res.data));
+            dispatch(getAllTeachersSuccess(res.data, isFiltered));
         }, err => dispatch(getAllTeachersFailed(err)));
     };
 };

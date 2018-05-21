@@ -82,6 +82,15 @@ module.exports = (student, teachers, N = 15) => {
         if (candidate.group_lesson !== student.group_lesson) errorsSum += 100;
         if (candidate.price > student.max_price) errorsSum += 100;
 
+        const { avgRating } = candidate;
+        if (avgRating === 0) {
+            errorsSum += 50;
+        } else if (avgRating < 4) {
+            errorsSum += Math.max(100, (3 - avgRating) * 100);
+        } else if (avgRating === 4) {
+            errorsSum += 25;
+        }
+
         return callback(null, errorsSum);
     }
 

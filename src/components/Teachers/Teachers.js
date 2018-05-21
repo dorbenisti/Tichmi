@@ -15,22 +15,26 @@ class Teachers extends Component {
     }
 
     render() {
-        const { match } = this.props;
+        const { match, isFiltered, teachers, error, loading, actions } = this.props;
+        const { getAllTeachers } = actions;
 
-        if (this.props.error) {
+        if (error) {
             return (
                 <h1>Error occured: {this.props.error}</h1>
             )
-        } else if (this.props.loading) {
+        } else if (loading) {
             return (
                 <h1>loading...</h1>
             )
         } else {
             return (
-                <div className={styles.teachers_view}>
-                    {this.props.teachers.map(teacher => (
-                        <Teacher key={teacher.id} teacher={teacher} match={match} />))}
-                </div>
+                <React.Fragment>
+                    { isFiltered && <a href="" onClick={getAllTeachers}>בטל חיפוש</a> }
+                    <div className={styles.teachers_view}>
+                        {teachers.map(teacher => (
+                            <Teacher key={teacher.id} teacher={teacher} match={match} />))}
+                    </div>
+                </React.Fragment>
             )
         }
     }
@@ -38,11 +42,12 @@ class Teachers extends Component {
 
 function mapStateToProps(state) {
 
-    const { teachers, loading, error, searchText } = state.teachers;
+    const { teachers, loading, error, searchText, isFiltered } = state.teachers;
 
     return {
         teachers,
         loading,
+        isFiltered,
         error,
         searchText
     };
