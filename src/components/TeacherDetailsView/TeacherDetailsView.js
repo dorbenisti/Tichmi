@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import StarsRating from "../common-components/stars-rating/StarsRating";
 import { RaisedButton, FlatButton, Dialog, TextField, Paper } from "material-ui";
+import Snackbar from 'material-ui/Snackbar';
 
 import styles from './style.css';
 
@@ -17,10 +18,15 @@ class TeacherDetailsView extends Component {
             reviewDialogOpen: false,
             reviewViewOpen: false,
             chosenRating: 0,
+            errorMessage: '',
+            snackBarOpen: false
         };
 
         this.onReviewSubmit = this.onReviewSubmit.bind(this);
         this.getTeacherDetails = this.getTeacherDetails.bind(this);
+        this.handleOpenSnackBar = this.handleOpenSnackBar.bind(this);
+        this.handleCloseSnackBar = this.handleCloseSnackBar.bind(this);
+        this.handleSnackBarMessege = this.handleSnackBarMessege.bind(this);
     }
 
     componentDidMount() {
@@ -93,6 +99,9 @@ class TeacherDetailsView extends Component {
                         isModalOpen={reviewDialogOpen}
                         handleClose={() => this.setState({ reviewDialogOpen: false })}
                         onSuccess={this.onReviewSubmit}
+                        handleOpenSnackBar={this.handleOpenSnackBar}
+                        handleCloseSnackBar={this.handleCloseSnackBar}
+                        handleSnackBarMessege={(txt) => this.handleSnackBarMessege(txt)}
                     />
                 </div>
                 <Dialog title={'צור קשר'} open={contactDialogOpen} onRequestClose={() => this.setState({contactDialogOpen: false})} actions={contactActions}>
@@ -100,6 +109,21 @@ class TeacherDetailsView extends Component {
                     <p>{`כתובת מייל:  ${teacher.email}`}</p>
                     <p>{`פלאפון:  ${teacher.phone}`}</p>
                 </Dialog>
+                <div>
+                    <Snackbar
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        open={this.state.snackBarOpen}
+                        autoHideDuration={5000}
+                        message={<span id="message-id">{this.state.errorMessage}</span>}
+                        action={[
+
+                        ]}
+                    />
+                </div>
+
             </div>
         );
     }
@@ -115,6 +139,19 @@ class TeacherDetailsView extends Component {
     onReviewSubmit() {
         this.getTeacherDetails();
     }
+
+    handleOpenSnackBar() {
+        this.setState({ snackBarOpen: true });
+    }
+
+    handleCloseSnackBar() {
+        this.setState({ snackBarOpen: false });
+    }
+
+    handleSnackBarMessege(txt) {
+        this.setState({ errorMessage: txt });
+    }
+
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -137,15 +174,22 @@ class ReviewSubmitModal extends Component {
     }
 
     handleReviewSubmit() {
-        const { teacher, handleClose, onSuccess } = this.props;
+        const { teacher, handleClose, onSuccess, handleCloseSnackBar, handleOpenSnackBar, handleSnackBarMessege } = this.props;
         const { ratings, reviewText } = this.state;
 
         axios.post('/api/review', { ratings, reviewText, teacherId: teacher.id })
             .then(() => {
+                handleOpenSnackBar();
+                handleSnackBarMessege('הביקורת נשמרה בהצלחה!');
                 onSuccess();
                 handleClose();
             })
-            .catch((e) => console.log(e));
+            .catch((e) => {
+                handleOpenSnackBar();
+                handleSnackBarMessege('אירעה שגיאה בעת שמירת הביקורת.');
+            });
+
+        setTimeout(handleCloseSnackBar, 5000);
     }
 
     render() {
