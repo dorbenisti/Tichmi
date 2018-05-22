@@ -18,14 +18,13 @@ class TeacherDetailsView extends Component {
             reviewViewOpen: false,
             chosenRating: 0,
         };
+
+        this.onReviewSubmit = this.onReviewSubmit.bind(this);
+        this.getTeacherDetails = this.getTeacherDetails.bind(this);
     }
 
     componentDidMount() {
-        axios.get(`/api/teacher/${this.props.id}`).then(res => {
-            this.setState({
-                teacher: res.data
-            });
-        });
+        this.getTeacherDetails();
     }
 
     render() {
@@ -89,7 +88,12 @@ class TeacherDetailsView extends Component {
                         onClick={() => this.setState({contactDialogOpen: true})}>
                         צור קשר
                     </RaisedButton>
-                    <ReviewSubmitModal teacher={teacher} isModalOpen={reviewDialogOpen} handleClose={() => this.setState({ reviewDialogOpen: false })} />
+                    <ReviewSubmitModal
+                        teacher={teacher}
+                        isModalOpen={reviewDialogOpen}
+                        handleClose={() => this.setState({ reviewDialogOpen: false })}
+                        onSuccess={this.onReviewSubmit}
+                    />
                 </div>
                 <Dialog title={'צור קשר'} open={contactDialogOpen} onRequestClose={() => this.setState({contactDialogOpen: false})} actions={contactActions}>
                     <b>{`${teacher.first_name} ${teacher.last_name}`}</b>
@@ -98,6 +102,18 @@ class TeacherDetailsView extends Component {
                 </Dialog>
             </div>
         );
+    }
+
+    getTeacherDetails() {
+        axios.get(`/api/teacher/${this.props.id}`).then(res => {
+            this.setState({
+                teacher: res.data
+            });
+        });
+    }
+
+    onReviewSubmit() {
+        this.getTeacherDetails();
     }
 }
 
@@ -121,11 +137,14 @@ class ReviewSubmitModal extends Component {
     }
 
     handleReviewSubmit() {
-        const { teacher, handleClose } = this.props;
+        const { teacher, handleClose, onSuccess } = this.props;
         const { ratings, reviewText } = this.state;
 
         axios.post('/api/review', { ratings, reviewText, teacherId: teacher.id })
-            .then(handleClose)
+            .then(() => {
+                onSuccess();
+                handleClose();
+            })
             .catch((e) => console.log(e));
     }
 
