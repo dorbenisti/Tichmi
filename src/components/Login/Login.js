@@ -33,7 +33,7 @@ class Login extends Component {
         axios.get('/api/user').then(res => {
             loginSuccess(res.data);
             push('/');
-        }, () => {});
+        }, () => {}).catch(e => console.log(e));
     }
 
     render() {
