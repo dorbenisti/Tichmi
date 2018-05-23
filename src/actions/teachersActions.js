@@ -28,7 +28,9 @@ const getAllTeachers = (subjectId = null) => {
 
         promise.then(res => {
             dispatch(getAllTeachersSuccess(res.data, isFiltered));
-        }, err => dispatch(getAllTeachersFailed(err)));
+        });
+
+        //.catch(e => {console.log(e)});
     };
 };
 

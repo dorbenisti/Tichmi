@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TeachersActions } from "../../actions";
 import axios from "axios";
+import Snackbar from 'material-ui/Snackbar';
 
 class SearchBox extends Component {
 
@@ -16,9 +17,18 @@ class SearchBox extends Component {
         this.state = {
             subjects: null,
             selectedSubjectId: null,
-            selectedText: ''
+            selectedText: '',
+            errorMessage: '',
+            snackBarOpen: false
         };
+
+        this.handleOpenSnackBar = this.handleOpenSnackBar.bind(this);
+        this.handleCloseSnackBar = this.handleCloseSnackBar.bind(this);
+        this.handleSnackBarMessege = this.handleSnackBarMessege.bind(this);
+        this.searchTeachers = this.searchTeachers.bind(this);
     }
+
+
 
     componentDidMount() {
         axios.get('/api/subjects').then(result => {
@@ -64,12 +74,56 @@ class SearchBox extends Component {
 
                 <RaisedButton label="חפש" secondary={true} className={styles.button} onClick={this.searchTeachers} />
                 <RaisedButton label="חיפוש מתקדם" secondary={true} className={styles.button} />
+                <div>
+                    <Snackbar
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        open={this.state.snackBarOpen}
+                        autoHideDuration={5000}
+                        message={<span id="message-id">{this.state.errorMessage}</span>}
+                        action={[
+
+                        ]}
+                    />
+                </div>
             </div>
+
         );
     }
 
     searchTeachers(subjectId) {
-        this.props.actions.getAllTeachers(subjectId);
+        var self = this;
+
+        if (isNaN(Number(subjectId))){
+            self.handleOpenSnackBar();
+            self.handleSnackBarMessege('לא נבחר נושא לסינון');
+        }
+        else {
+            try{
+                self.props.actions.getAllTeachers(subjectId);
+            }
+            catch (e){
+                self.handleOpenSnackBar();
+                self.handleSnackBarMessege('בדיקה');
+            }
+
+        }
+
+
+    }
+
+    handleOpenSnackBar() {
+        this.setState({ snackBarOpen: true });
+    }
+
+    handleCloseSnackBar() {
+        this.setState({ snackBarOpen: false });
+    }
+
+    handleSnackBarMessege(txt) {
+        this.setState({ errorMessage: txt });
     }
 }
 
