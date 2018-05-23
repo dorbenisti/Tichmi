@@ -76,7 +76,7 @@ export default class EntitySelect extends Component {
         valuesCache: PropTypes.instanceOf(ServerDataCache).isRequired,
         labelText: PropTypes.string.isRequired,
         onChange: PropTypes.func.isRequired,
-        value: ensureValueMatchesMultiple,//PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number]),
+        value: ensureValueMatchesMultiple,
         multiple: PropTypes.bool
     };
 

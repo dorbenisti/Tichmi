@@ -20,7 +20,7 @@ class Teachers extends Component {
 
         if (error) {
             return (
-                <h1>Error occured: {this.props.error}</h1>
+                <h1 style={{ color: 'red' }}>Error occured: {typeof error === 'object' ? error.response.statusText || error.response.data : error}</h1>
             )
         } else if (loading) {
             return (
@@ -33,6 +33,7 @@ class Teachers extends Component {
                     <div className={styles.teachers_view}>
                         {teachers.map(teacher => (
                             <Teacher key={teacher.id} teacher={teacher} match={match} />))}
+                        {!teachers.length && (<h1 style={{color:'black'}}>לא נמצאו מורים</h1>)}
                     </div>
                 </React.Fragment>
             )

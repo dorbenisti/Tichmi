@@ -72,8 +72,8 @@ class SearchBox extends Component {
 
                 {searchField}
 
-                <RaisedButton label="חפש" secondary={true} className={styles.button} onClick={this.searchTeachers} />
-                <RaisedButton label="חיפוש מתקדם" secondary={true} className={styles.button} />
+                {/* <RaisedButton label="חפש" secondary={true} className={styles.button} onClick={this.searchTeachers} />
+                <RaisedButton label="חיפוש מתקדם" secondary={true} className={styles.button} /> */}
                 <div>
                     <Snackbar
                         anchorOrigin={{

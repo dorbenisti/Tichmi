@@ -23,7 +23,7 @@ class App extends Component {
         const barContent = (
             <div className={styles.barContent}>
                 <Link to={`${match.path}`}><img src={logo} className={styles.logo} /></Link>
-                <SearchBox />
+                {!!user && !user.is_teacher &&  <SearchBox />}
             </div>
         );
 
@@ -43,7 +43,7 @@ class App extends Component {
         if (user) {
             rightButtons = (
                 <div className={styles.rightButtons}>
-                    <span>ברוך הבא {user}</span>
+                    <span>ברוך הבא {user.first_name} {user.last_name}</span>
                     <RaisedButton className={styles.link} onClick={this.props.actions.logout} label="התנתק" />
                 </div>
             );
@@ -57,7 +57,7 @@ class App extends Component {
                             <Route exact path={match.path} render={props => (
                                 <React.Fragment>
                                     <AppBar iconElementLeft={barContent} iconElementRight={rightButtons} iconStyleLeft={{ width: '65%' }} />
-                                    <Teachers {...props} />
+                                    {user.is_teacher ? (<TeacherMainView />) : (<Teachers {...props} />) }
                                 </React.Fragment>
 
                             )} />
@@ -90,6 +90,15 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators(LoginActions, dispatch)
     };
+}
+
+function TeacherMainView() {
+    return (
+        <div>
+            <div style={{color: 'black' }}>היי מורה :)</div>
+            <img src="https://media.giphy.com/media/M6ewNmiX6pUmk/giphy.gif" />
+        </div>
+    );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

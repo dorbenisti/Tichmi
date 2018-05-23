@@ -51,6 +51,46 @@ teachers: [{
 }]
 */
 
+function getDistanceBetweenCoordinatesInKM({lat: lat1, lon: lon1}, {lat: lat2, lon: lon2}) {
+    const p = Math.PI / 180;
+    const c = Math.cos;
+    const a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+        (1 - c((lon2 - lon1) * p)) / 2;
+
+    return 12742 * Math.asin(Math.sqrt(a));
+}
+
+function fitnessEvaluator(teacher, student) {
+    let errorsSum = getDistanceBetweenCoordinatesInKM(teacher, student);
+
+    if (teacher.group_lesson !== student.group_lesson) errorsSum += 100;
+    if (teacher.price > student.max_price) errorsSum += (teacher.price - student.max_price);
+
+    const { avgRating } = teacher;
+    if (avgRating === 0) {
+        errorsSum += 100;
+    } else if (avgRating < 4) {
+        errorsSum += Math.max(100, (3 - avgRating) * 100);
+    } else if (avgRating === 4) {
+        errorsSum += 25;
+    }
+
+    return errorsSum;
+}
+
+module.exports = (student, teachers, N = 15) => {
+    const teachersWithScores = teachers.map(teacher => ({
+        teacher,
+        score: fitnessEvaluator(teacher, student)
+    }));
+
+    const ordered = teachersWithScores.sort((a, b) => a.score - b.score);
+    const firstN = ordered.slice(0, Math.min(N, ordered.length));
+    return Promise.resolve(firstN.map(({teacher}) => teacher));
+}
+
+ /*
 module.exports = (student, teachers, N = 15) => {
     const options = {
         populationSize: 100,
@@ -133,4 +173,4 @@ function getDistanceBetweenCoordinatesInKM({lat: lat1, lon: lon1}, {lat: lat2, l
         (1 - c((lon2 - lon1) * p)) / 2;
 
     return 12742 * Math.asin(Math.sqrt(a));
-}
+} */

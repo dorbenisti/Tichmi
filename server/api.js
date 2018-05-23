@@ -14,8 +14,9 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
     .post('/login', passport.authenticate('local-login', { failureMessage: true }), sendOkWithUser)
 
     .get('/user', (req, res) => {
-        if (req.user && req.user.email) {
-            return res.send(req.user.email);
+        if (req.user) {
+            const {password, ...userWithoutPassword} = req.user;
+            return res.send(userWithoutPassword);
         }
 
         return res.sendStatus(404).end();
@@ -35,6 +36,20 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
             }, (err) => {
                 res.sendStatus(500).send(err);
                 end();
+            });
+        }, true);
+    })
+
+    .get('/didUserRateTeacher/:teacherId', (req, res) => {
+        const { teacherId } = req.params;
+
+        useDbConnection((conn, end) => {
+            conn.query('select student_id from review where student_id=? AND teacher_id=?', [req.user.id, teacherId], (err, rows) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+
+                res.json(!!rows.length);
             });
         }, true);
     })

@@ -8,7 +8,6 @@ import Snackbar from 'material-ui/Snackbar';
 import styles from './style.css';
 
 class TeacherDetailsView extends Component {
-
     constructor(props) {
         super(props);
 
@@ -29,8 +28,11 @@ class TeacherDetailsView extends Component {
         this.handleSnackBarMessege = this.handleSnackBarMessege.bind(this);
     }
 
-    componentDidMount() {
-        this.getTeacherDetails();
+    async componentDidMount() {
+        const teacher = await this.getTeacherDetails();
+        const didAlreadyRateThisTeacher = await this.didUserAlreadyRate();
+
+        this.setState({ teacher, didAlreadyRateThisTeacher });
     }
 
     render() {
@@ -38,7 +40,7 @@ class TeacherDetailsView extends Component {
             <FlatButton label='סגור' onClick={() => this.setState({contactDialogOpen: false})} primary={true} />
         ];
 
-        const { teacher, contactDialogOpen, reviewDialogOpen, reviewViewOpen } = this.state;
+        const { teacher, contactDialogOpen, reviewDialogOpen, reviewViewOpen, didAlreadyRateThisTeacher } = this.state;
 
         if (!teacher) return (<div>Loading...</div>);
 
@@ -83,7 +85,8 @@ class TeacherDetailsView extends Component {
                         type="button"
                         secondary={true}
                         buttonStyle={{ color: "white" }}
-                        onClick={() => this.setState({ reviewDialogOpen: true })}>
+                        onClick={() => this.setState({ reviewDialogOpen: true })}
+                        disabled={didAlreadyRateThisTeacher}>
                         הוסף ביקורת
                     </RaisedButton>
                     <RaisedButton
@@ -128,16 +131,20 @@ class TeacherDetailsView extends Component {
         );
     }
 
-    getTeacherDetails() {
-        axios.get(`/api/teacher/${this.props.id}`).then(res => {
-            this.setState({
-                teacher: res.data
-            });
-        });
+    async getTeacherDetails() {
+        return axios.get(`/api/teacher/${this.props.id}`).then(res => res.data);
     }
 
-    onReviewSubmit() {
-        this.getTeacherDetails();
+    async didUserAlreadyRate() {
+        const { id } = this.props;
+
+        return axios.get(`/api/didUserRateTeacher/${id}`).then(res => res.data);
+    }
+
+    async onReviewSubmit() {
+        const teacher = await this.getTeacherDetails();
+
+        this.setState({ teacher, didAlreadyRateThisTeacher: true });
     }
 
     handleOpenSnackBar() {
@@ -151,7 +158,6 @@ class TeacherDetailsView extends Component {
     handleSnackBarMessege(txt) {
         this.setState({ errorMessage: txt });
     }
-
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -208,7 +214,6 @@ class ReviewSubmitModal extends Component {
         </Dialog>);
     }
 }
-
 
 class ReviewViewModal extends Component {
     constructor(props) {
