@@ -17,7 +17,7 @@ export default class EntitySelect extends Component {
     componentDidMount() {
         const { onChange, valuesCache, multiple } = this.props;
         
-        valuesCache.GetData.then(values => {
+        valuesCache.GetData().then(values => {
             this.setState({
                 values
             });

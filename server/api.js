@@ -183,11 +183,6 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
                 }, err => res.status(500).send(err));
             });
         }, true)
-    })
-
-    // No routes matched? 404.
-    .use((req, res) => {
-        return res.sendStatus(404).end();
     });
 
 function useDbConnection(callback, isAsync = false) {
