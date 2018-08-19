@@ -162,7 +162,7 @@ api.post('/register', passport.authenticate('local-signup', { failureMessage: tr
                     return res.json([]);
                 }
 
-                GeneticAlgorithm(student, teachers).then(results => {
+                GeneticAlgorithm(student, teachers, {distance: 10}).then(results => {
                     const teachersResultsArr = [];
 
                     const cbk = teacher => {

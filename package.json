@@ -37,6 +37,7 @@
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
     "js-sha512": "^0.7.1",
+    "lodash": "^4.17.10",
     "material-ui": "^0.20.0",
     "morgan": "^1.9.0",
     "multiparty": "^4.1.3",

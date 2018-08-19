@@ -1,57 +1,7 @@
-const Genetical = require('genetical');
+const cloneDeep = require("lodash/cloneDeep");
+const isObject = require("lodash/isObject");
 
-/*
-Filter teachers that have the requested subject
-Filter by minPrice
-group_lesson incompatability will add 1000 points
-maxPrice violation will add 1000 points
-
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(200) NOT NULL,
-  `is_teacher` tinyint(1) NOT NULL,
-  `gender` int(1) NOT NULL COMMENT '0=male\n1=female',
-  `first_name` varchar(45) NOT NULL,
-  `last_name` varchar(45) NOT NULL,
-  `city_id` int(11) NOT NULL,
-  `group_lesson` int(1) NOT NULL,
-  PRIMARY KEY (`id`),
-
-CREATE TABLE `teacher` (
-  `id` int(11) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `price` int(11) NOT NULL,
-  `image_url` varchar(100) NOT NULL,
-  `description` varchar(300) NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `teacher_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `student` (
-  `id` int(11) NOT NULL,
-  `max_price` int(11) NOT NULL,
-  `max_km_distance` int(11) NOT NULL,
-  `min_price` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  CONSTRAINT `student_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-student: {
-    group_lesson: bool,
-    max_price: int,
-    max_km_distance: int,
-    lon,
-    lat
-}
-teachers: [{
-    group_lesson: bool,
-    price: int,
-    lon,
-    lat
-}]
-*/
-
-function getDistanceBetweenCoordinatesInKM({lat: lat1, lon: lon1}, {lat: lat2, lon: lon2}) {
+function getDistanceBetweenCoordinatesInKM({ lat: lat1, lon: lon1 }, { lat: lat2, lon: lon2 }) {
     const p = Math.PI / 180;
     const c = Math.cos;
     const a = 0.5 - c((lat2 - lat1) * p) / 2 +
@@ -61,116 +11,65 @@ function getDistanceBetweenCoordinatesInKM({lat: lat1, lon: lon1}, {lat: lat2, l
     return 12742 * Math.asin(Math.sqrt(a));
 }
 
-function fitnessEvaluator(teacher, student) {
-    let errorsSum = getDistanceBetweenCoordinatesInKM(teacher, student);
+function normalizeBetween1to10(teachers, trait, traitFunc = x => x) {
+    const getTrait = t => traitFunc(t[trait]);
+    const ratio = (Math.max(...teachers.map(getTrait)) / 10) || 1;
 
-    if (teacher.group_lesson !== student.group_lesson) errorsSum += 100;
-    if (teacher.price > student.max_price) errorsSum += (teacher.price - student.max_price);
-
-    const { avgRating } = teacher;
-    if (avgRating === 0) {
-        errorsSum += 100;
-    } else if (avgRating < 4) {
-        errorsSum += Math.max(100, (3 - avgRating) * 100);
-    } else if (avgRating === 4) {
-        errorsSum += 25;
-    }
-
-    return errorsSum;
+    return teachers.map(t => ({
+        ...t,
+        [trait]: getTrait(t) / ratio
+    }));
 }
 
-module.exports = (student, teachers, N = 15) => {
-    const teachersWithScores = teachers.map(teacher => ({
+/*
+   coefficients: {
+       distance: 1-10,
+       price: 1-10,
+       rating: 1-10,
+       groupLesson: 1-10
+   }
+   */
+function fitnessEvaluator(teacher, coefficients) {
+    const { distance: distanceCF, price: priceCF, rating: ratingCF, groupLesson: groupLessonCF } = coefficients;
+    const { group_lesson, distance, price, avgRating } = teacher;
+
+    return ((distance * distanceCF) + (price * priceCF) + ((5 - avgRating) * ratingCF) + (group_lesson * groupLessonCF));
+}
+
+function normalizeTeachers(teachers, student) {
+    const { group_lesson: studentGL, max_price: studentMaxPrice } = student;
+
+    teachers = cloneDeep(teachers).map(t => ({
+        ...t,
+        distance: getDistanceBetweenCoordinatesInKM(t, student)
+    }));
+
+    teachers = normalizeBetween1to10(teachers, 'group_lesson', gl => (studentGL ^ gl) ? 3 : 0);
+    teachers = normalizeBetween1to10(teachers, 'distance');
+    teachers = normalizeBetween1to10(teachers, 'price');
+    teachers = normalizeBetween1to10(teachers, 'avgRating');
+
+    return teachers;
+}
+
+module.exports = (student, teachers, coefficients, N = 15) => {
+    if (teachers.length <= 1) return teachers;
+
+    const handler = {
+        get: (target, name) => {
+            return target.hasOwnProperty(name) ? target[name] : 1;
+        }
+    };
+
+    coefficients = (isObject(coefficients) && coefficients) || {};
+    const cfProxy = new Proxy(coefficients, handler);
+
+    const teachersWithScores = normalizeTeachers(teachers, student).map(teacher => ({
         teacher,
-        score: fitnessEvaluator(teacher, student)
+        score: fitnessEvaluator(teacher, cfProxy)
     }));
 
     const ordered = teachersWithScores.sort((a, b) => a.score - b.score);
     const firstN = ordered.slice(0, Math.min(N, ordered.length));
-    return Promise.resolve(firstN.map(({teacher}) => teacher));
+    return Promise.resolve(firstN.map(({ teacher }) => teacher));
 }
-
- /*
-module.exports = (student, teachers, N = 15) => {
-    const options = {
-        populationSize: 100,
-        populationFactory: () => {},
-        terminationCondition: terminationCondition,
-        fitnessEvaluator: fitnessEvaluator,
-        natural: false,
-        evolutionStrategy: [Genetical.CROSSOVER, Genetical.MUTATION],
-        evolutionOptions: {
-            crossover: crossover,
-            mutate: mutate,
-            mutationProbability: 0.02
-        },
-        elitism: 0.05
-    };
-
-    function terminationCondition(stats) {
-        return (stats.bestScore < 50) || stats.generation === 1000;
-    }
-
-    function mutate(candidate, mutationProbability, generator, callback) {
-        callback(candidate);
-    }
-
-    function fitnessEvaluator(candidate, callback) {
-        candidate = candidate.value;
-        let errorsSum = getDistanceBetweenCoordinatesInKM(candidate, student);
-
-        if (candidate.group_lesson !== student.group_lesson) errorsSum += 100;
-        if (candidate.price > student.max_price) errorsSum += 100;
-
-        const { avgRating } = candidate;
-        if (avgRating === 0) {
-            errorsSum += 50;
-        } else if (avgRating < 4) {
-            errorsSum += Math.max(100, (3 - avgRating) * 100);
-        } else if (avgRating === 4) {
-            errorsSum += 25;
-        }
-
-        return callback(null, errorsSum);
-    }
-
-    function crossover(parent1, parent2, points, generator, callback) {
-        return callback([parent1, parent2]);
-    }
-
-    const algorithm = new Genetical(options);
-
-    let population;
-    algorithm.on('initial population created', function (initialPopulation) {
-        if (!population) {
-            population = initialPopulation;
-        }
-    });
-
-    algorithm.on('population evaluated', p => {
-        population = p;
-    });
-
-    return new Promise((resolve, reject) => {
-        algorithm.on('error', reject);
-
-        const internalStructure = teachers.map(t => ({ value: t }));
-        algorithm.solve(internalStructure, () => {
-            const orderedPopulation = [...population].sort((a, b) => a.score - b.score);
-            const firstN = orderedPopulation.slice(0, Math.min(N, orderedPopulation.length - 1));
-            const dataToRet = firstN.map(pair => pair.value);
-
-            resolve(dataToRet);
-        });
-    });
-};
-
-function getDistanceBetweenCoordinatesInKM({lat: lat1, lon: lon1}, {lat: lat2, lon: lon2}) {
-    const p = Math.PI / 180;
-    const c = Math.cos;
-    const a = 0.5 - c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) *
-        (1 - c((lon2 - lon1) * p)) / 2;
-
-    return 12742 * Math.asin(Math.sqrt(a));
-} */
